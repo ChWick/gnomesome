@@ -1,6 +1,7 @@
 const Lang = imports.lang;
 const Main = imports.ui.main;
 const Shell = imports.gi.Shell;
+const Util = imports.misc.util;
 const ExtensionUtils = imports.misc.extensionUtils;
 const Me = ExtensionUtils.getCurrentExtension();
 const MenuButton = Me.imports.menubutton;
@@ -18,6 +19,9 @@ const Manager = new Lang.Class({
         Main.panel.addToStatusArea('gnomesome-manager', this.menuButton);
 
         this.initKeyBindings();
+        Util.connect_and_track(this, global.screen, 'notify::n-workspaces',
+            Lang.bind(this, function() { this.update_workspaces(); }));
+        this.update_workspaces();
     },
     destroy: function() {
         this.menuButton.destroy();
@@ -29,6 +33,9 @@ const Manager = new Lang.Class({
         this.handleKey("set-workspace-3",    Lang.bind(this, function() {this.set_workspace(2);}));
         this.handleKey("set-workspace-4",    Lang.bind(this, function() {this.set_workspace(3);}));
         this.handleKey("set-workspace-5",    Lang.bind(this, function() {this.set_workspace(4);}));
+
+        this.handleKey("launch-terminal",    function() {Util.spawn(['gnome-terminal']);});
+
     },
 
     // Utility method that binds a callback to a named keypress-action.
@@ -79,4 +86,6 @@ const Manager = new Lang.Class({
             next_workspace.activate(global.get_current_time());
         }
     },
+    update_workspaces: function () {
+    }
 });

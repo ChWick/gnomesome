@@ -26,5 +26,10 @@
             <summary>Select the workspace 5.</summary>
             <description>Select the workspace with id 5.</description>
         </key>
+        <key type="as" name="launch-terminal">
+            <default>["&lt;Mod4&gt;return"]</default>
+            <summary>Lanch an terminal.</summary>
+            <description>Launches a gnome terminal.</description>
+        </key>
     </schema>
 </schemalist>      
