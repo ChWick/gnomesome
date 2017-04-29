@@ -6,12 +6,13 @@ JS_FILES = {extension,manager,menubutton,convenience}.js
 
 all: gnomesome.zip
 
-schemas:
-	mkdir ./schemas/
-	glib-compile-schemas --strict --targetdir=./schemas/ .
+extension: ./schemas/gschemas.compiled
 
-gnomesome.zip: schemas
+./schemas/gschemas.compiled:
+	glib-compile-schemas --strict ./schemas
+
+gnomesome.zip: extension
 	zip gnomesome.zip -r $(JS_FILES) metadata.json locale/*/*/*.mo schemas
 
 clean:
-rm -rf gnomesome.zip schemas
+	rm -rf gnomesome.zip ./schemas/gschemas.compiled 
