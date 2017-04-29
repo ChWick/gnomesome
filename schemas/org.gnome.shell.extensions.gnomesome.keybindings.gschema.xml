@@ -1,0 +1,16 @@
+
+<?xml version="1.0" encoding="UTF-8"?>
+<schemalist>
+    <schema id="org.gnome.shell.extensions.gnomesome.keybindings" path="/org/gnome/shell/extensions/gnomesome.keybindings/">
+        <key type="as" name="set-workspace-1">
+            <default>["&lt;Mod4&gt;1"]</default>
+            <summary>Select the workspace 1.</summary>
+            <description>Select the workspace with id 1.</description>
+        </key>
+        <key type="as" name="set-workspace-2">
+            <default>["&lt;Mod4&gt;2"]</default>
+            <summary>Select the workspace 2.</summary>
+            <description>Select the workspace with id 2.</description>
+        </key>
+    </schema>
+</schemalist>      

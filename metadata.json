@@ -1,0 +1,7 @@
+{
+	"name": "Gnomesome",
+	"description": "Tiling window manager with awesome keybindings",
+	"uuid": "gnomesome@wick.chr.info@gmail.com",
+	"shell-version": ["3.22.3"],
+	"settings-keybindings": "schemas/org.gnome.shell.extension.keybindings.gschema.xml"
+}
