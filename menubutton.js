@@ -22,9 +22,19 @@ const MenuButton = new Lang.Class({
             'workspace-switched',
             Lang.bind(this, this._updateIndicator)));
 
+        this._screenSignals.push(global.screen.connect_after(
+            'window-entered-monitor',
+            Lang.bind(this, this._updateIndicator)));
+
+        this._screenSignals.push(global.screen.connect_after(
+            'window-left-monitor',
+            Lang.bind(this, this._updateIndicator)));
+
+        this._screenSignals.push(global.display.connect_after(
+            'notify::focus-window',
+            Lang.bind(this, this._updateIndicator)));
+
         this._updateIndicator();
-
-
     },
     destroy: function() {
         for (let i = 0; i < this._screenSignals.length; i++) {
@@ -34,7 +44,12 @@ const MenuButton = new Lang.Class({
     },
     _updateIndicator: function() {
         this._currentWorkspace = global.screen.get_active_workspace().index();
+        var current_window = global.display['focus-window'];
+        var monitor = 0;
+        if (current_window) {
+            monitor = current_window.get_monitor();
+        }
         this.statusLabel.set_text("W" + (this._currentWorkspace + 1).toString()
-                                + "D0");
+                                + "M" + monitor);
     },
 });

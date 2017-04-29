@@ -6,11 +6,16 @@ const ExtensionUtils = imports.misc.extensionUtils;
 const Me = ExtensionUtils.getCurrentExtension();
 const MenuButton = Me.imports.menubutton;
 const Convenience = Me.imports.convenience;
+const Utils = Me.imports.utils;
+const Layout = Me.imports.layout;
 
 const Manager = new Lang.Class({
     Name: 'Gnomesome.Manager',
 
     _init: function() {
+        this.layouts = [];
+
+
         let extension = ExtensionUtils.getCurrentExtension();
         let schema = extension.metadata['settings-keybindings'];
         this.gsettings = Convenience.getSettings(schema);
@@ -19,9 +24,36 @@ const Manager = new Lang.Class({
         Main.panel.addToStatusArea('gnomesome-manager', this.menuButton);
 
         this.initKeyBindings();
-        Util.connect_and_track(this, global.screen, 'notify::n-workspaces',
-            Lang.bind(this, function() { this.update_workspaces(); }));
-        this.update_workspaces();
+
+        for (var id = 0; id < global.screen.get_n_workspaces(); ++id) {
+            this.prepare_workspace(id);
+        }
+
+        Utils.connect_and_track(this, global.screen, 'workspace-added',
+            Lang.bind(this, function(screen, id) {
+                global.log("[gnomesome] Workspace added " + id);
+                this.prepare_workspace(id);
+            })
+        );
+        Utils.connect_and_track(this, global.screen, 'workspace-removed',
+            Lang.bind(this, function(screen, id) {
+                global.log("[gnomesome] Workspace removed " + id);
+                this.remove_workspace(id);
+            })
+        );
+
+        Utils.connect_and_track(this, global.screen, 'window-entered-monitor',
+            Lang.bind(this, function(screen, mid, window) {global.log("[gnomesome] window-entered-monitor " + mid);}));
+
+        Utils.connect_and_track(this, global.screen, 'window-left-monitor',
+            Lang.bind(this, function(screen, mid, window) {global.log("[gnomesome] window-left-monitor " + mid);}));
+
+        var display = global.screen.get_display();
+        Utils.connect_and_track(this, display, 'notify::focus-window',
+            Lang.bind(this, function(display, window) {
+                // update current display
+            })
+        );
     },
     destroy: function() {
         this.menuButton.destroy();
@@ -86,6 +118,18 @@ const Manager = new Lang.Class({
             next_workspace.activate(global.get_current_time());
         }
     },
+    prepare_workspace: function (index) {
+        var workspace = global.screen.get_workspace_by_index(index);
+        var layouts_for_monitors = [];
+        for (var id = 0; id < global.screen.get_n_monitors; ++id) {
+            layouts_for_monitors = new Layout.Layout;
+        }
+        this.layouts.splice(index, 0, layouts_for_monitors);
+    },
+    remove_workspace: function (index) {
+        this.layouts.splice(index, 1);
+    },
     update_workspaces: function () {
+
     }
 });
