@@ -313,6 +313,7 @@ const Manager = new Lang.Class({
         } else {
             gswindow.set_maximize(true);
         }
+        this.current_layout().relayout();
     },
     toggle_fullscreen: function(fullscreen) {
         var cw = this.current_window();
@@ -326,6 +327,7 @@ const Manager = new Lang.Class({
         } else {
             cw.make_fullscreen();
         }
+        this.current_layout().relayout();
     },
     toggle_floating: function() {
         var gw = this.current_window().gswindow;
