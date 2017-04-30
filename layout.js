@@ -30,7 +30,25 @@ const Layout = new Lang.Class({
             this.gswindows.splice(index, 1);
         }
     },
+    allWindows: function() {
+        var windows = [];
+        for (var idx = 0; idx < this.gswindows.length; ++idx) {
+            windows.push(this.gswindows[idx].window);
+        }
+        return windows;
+    },
+    sortedWindowsByStacking: function() {
+        var windows = this.allWindows();
+        return global.display.sort_windows_by_stacking(windows);
+    },
+    topmostWindow: function() {
+        var sortedWindows = this.sortedWindowsByStacking();
+        return this.getGSWindowFromWindow(sortedWindows[sortedWindows.length - 1]);
+    },
     getGSWindowFromWindow: function(window) {
+        if (window && window.gswindow && window.gswindow.gslayout == this) {
+            return window.gswindow;
+        }
         for (var idx = 0; idx < this.gswindows.length; ++idx) {
             if (this.gswindows[idx].window === window) {
                 return this.gswindows[idx];

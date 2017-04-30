@@ -223,8 +223,7 @@ const Manager = new Lang.Class({
         var n_monitors = global.screen.get_n_monitors();
         var next_monitor = (monitor + offset + n_monitors) % n_monitors;
         var next_gslayout = this.layouts[workspace][next_monitor];
-        // TODO: Select topmost or most recent window on that screen
-        var newGSWindow = next_gslayout.gsWindowByIndex(0);
+        var newGSWindow = next_gslayout.topmostWindow();
         if (newGSWindow) {
             // check if there is a window on that workspace
             newGSWindow.window.activate(global.get_current_time());
