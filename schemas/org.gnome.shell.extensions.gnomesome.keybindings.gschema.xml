@@ -1,6 +1,31 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <schemalist>
     <schema id="org.gnome.shell.extensions.gnomesome.keybindings" path="/org/gnome/shell/extensions/gnomesome.keybindings/">
+        <key type="as" name="next-window">
+            <default>["&lt;Mod4&gt;j"]</default>
+            <summary>Select the next window.</summary>
+            <description>Select the next window on the current screen and workspace.</description>
+        </key>
+        <key type="as" name="previous-window">
+            <default>["&lt;Mod4&gt;k"]</default>
+            <summary>Select the previous window.</summary>
+            <description>Select the previous window on the current screen and workspace.</description>
+        </key>
+        <key type="as" name="next-monitor">
+            <default>["&lt;Mod4&gt;&lt;Ctrl&gt;j"]</default>
+            <summary>Select the next monitor.</summary>
+            <description>Select the topmost window on the next screen and current workspace.</description>
+        </key>
+        <key type="as" name="previous-monitor">
+            <default>["&lt;Mod4&gt;&lt;Ctrl&gt;k"]</default>
+            <summary>Select the previous monitor.</summary>
+            <description>Select the topmost window on the previous screen and current workspace.</description>
+        </key>
+        <key type="as" name="move-to-next-monitor">
+            <default>["&lt;Mod4&gt;o"]</default>
+            <summary>Move the current window to the next monitor</summary>
+            <description>Move the current focused window to the next monitor on the current workspace.</description>
+        </key>
         <key type="as" name="set-workspace-1">
             <default>["&lt;Mod4&gt;1"]</default>
             <summary>Select the workspace 1.</summary>
