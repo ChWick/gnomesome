@@ -2,6 +2,7 @@ const Lang = imports.lang;
 const Main = imports.ui.main;
 const Shell = imports.gi.Shell;
 const Util = imports.misc.util;
+const Meta = imports.gi.Meta;
 const ExtensionUtils = imports.misc.extensionUtils;
 const Me = ExtensionUtils.getCurrentExtension();
 const MenuButton = Me.imports.menubutton;
@@ -73,8 +74,13 @@ const Manager = new Lang.Class({
         );
     },
     destroy: function() {
+        this.releaseKeyBindings();
         this.menuButton.destroy();
-        this.parent();
+        Utils.disconnect_tracked_signals(this);
+        while (this.layouts.length > 0) {
+            this.remove_workspace(0);
+        }
+        //this.parent();
     },
     initKeyBindings: function() {
         this.handleKey("next-window",              Lang.bind(this, this.next_window));
@@ -88,14 +94,35 @@ const Manager = new Lang.Class({
         this.handleKey("set-workspace-4",    Lang.bind(this, function() {this.set_workspace(3);}));
         this.handleKey("set-workspace-5",    Lang.bind(this, function() {this.set_workspace(4);}));
 
+        this.handleKey("move-window-to-workspace-1", Lang.bind(this, function() {this.set_workspace(0, this.current_window());}));
+        this.handleKey("move-window-to-workspace-2", Lang.bind(this, function() {this.set_workspace(1, this.current_window());}));
+        this.handleKey("move-window-to-workspace-3", Lang.bind(this, function() {this.set_workspace(2, this.current_window());}));
+        this.handleKey("move-window-to-workspace-4", Lang.bind(this, function() {this.set_workspace(3, this.current_window());}));
+        this.handleKey("move-window-to-workspace-5", Lang.bind(this, function() {this.set_workspace(4, this.current_window());}));
+
+        this.handleKey("window-toggle-maximize",            Lang.bind(this, this.toggle_maximize));
+        this.handleKey("window-toggle-fullscreen",          Lang.bind(this, this.toggle_fullscreen));
         this.handleKey("launch-terminal",    function() {Util.spawn(['gnome-terminal']);});
 
+    },
+    releaseKeyBindings: function() {
+        var display = global.display;
+        for (var k in this._bound_keybindings) {
+            if(!this._bound_keybindings.hasOwnProperty(k)) continue;
+            var desc = "unbinding key " + k;
+            this._do(function() {
+                global.log(desc);
+                if (Main.wm.removeKeybinding) {
+                    Main.wm.removeKeybinding(k);
+                } else {
+                    display.remove_keybinding(k);
+                }
+            }, desc);
+        }
     },
 
     // Utility method that binds a callback to a named keypress-action.
     handleKey: function (name, func) {
-        var Meta = imports.gi.Meta;
-
         this._bound_keybindings[name] = true;
         var flags = Meta.KeyBindingFlags.NONE;
 
@@ -108,7 +135,7 @@ const Manager = new Lang.Class({
             ModeType.NORMAL | ModeType.OVERVIEW,
             Lang.bind(this, function() {this._do(func, "handler for binding " + name);}));
         if(!added) {
-            throw("failed to add keybinding handler for: " + name);
+            global.log("[gnomesome] Error: failed to add keybinding handler for: " + name);
         }
     },
 
@@ -129,12 +156,12 @@ const Manager = new Lang.Class({
 
     set_workspace: function (new_index, window) {
         if(new_index < 0 || new_index >= global.screen.get_n_workspaces()) {
-            self.log("No such workspace; ignoring");
+            global.log("No such workspace; ignoring");
             return;
         }
         var next_workspace = global.screen.get_workspace_by_index(new_index);
         if(window !== undefined) {
-            window.move_to_workspace(new_index);
+            window.change_workspace(next_workspace);
             next_workspace.activate_with_focus(window, global.get_current_time())
         } else {
             next_workspace.activate(global.get_current_time());
@@ -148,10 +175,14 @@ const Manager = new Lang.Class({
         }
         this.layouts.splice(index, 0, layouts_for_monitors);
 
-        workspace.connect("window-added", Lang.bind(this, this.window_added));
-        workspace.connect("window-removed", Lang.bind(this, this.window_removed));
+        Utils.connect_and_track(this, workspace, "window-added", Lang.bind(this, this.window_added));
+        Utils.connect_and_track(this, workspace, "window-removed", Lang.bind(this, this.window_removed));
     },
     remove_workspace: function (index) {
+        var layouts_for_monitors = this.layouts[index];
+        for (var lidx = 0; lidx < layouts_for_monitors.length; ++lidx) {
+            layouts_for_monitors[lidx].destroy();
+        }
         this.layouts.splice(index, 1);
     },
     update_workspaces: function () {
@@ -179,6 +210,9 @@ const Manager = new Lang.Class({
             var gswindow = gslayout.getGSWindowFromWindow(window);
             gslayout.removeGSWindow(gswindow);
         }
+    },
+    current_window: function() {
+        return global.display['focus_window'];
     },
     current_monitor_index: function() {
         var cw = global.display['focus_window'];
@@ -236,5 +270,31 @@ const Manager = new Lang.Class({
         var n_monitors = global.screen.get_n_monitors();
         var next_midx = (midx + offset + n_monitors) % n_monitors;
         cw.move_to_monitor(next_midx);
-    }
+    },
+    toggle_maximize: function(maximize) {
+        var cw = this.current_window();
+        if (!cw) {return;}
+        if (maximize === true) {
+            cw.maximize(Meta.MaximizeFlags.BOTH);
+        } else if (maximize === false) {
+            cw.unmaximize(Meta.MaximizeFlags.BOTH);
+        } else if (cw.get_maximized()) {
+            cw.unmaximize(Meta.MaximizeFlags.BOTH);
+        } else {
+            cw.maximize(Meta.MaximizeFlags.BOTH);
+        }
+    },
+    toggle_fullscreen: function(fullscreen) {
+        var cw = this.current_window();
+        if (!cw) {return;}
+        if (fullscreen === true) {
+            cw.make_fullscreen();
+        } else if (fullscreen === false) {
+            cw.unmake_fullscreen();
+        } else if (cw.is_fullscreen()) {
+            cw.unmake_fullscreen();
+        } else {
+            cw.make_fullscreen();
+        }
+    },
 });

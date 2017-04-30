@@ -12,6 +12,13 @@ const Layout = new Lang.Class({
         this.mode = Modes.FLOATING;
         this.gswindows = [];
     },
+    destroy: function() {
+        global.log("[gnomesome] Cleaning up layout.");
+        for (var gsw in this.gswindows) {
+            gsw.gswindow = null;
+        }
+        this.gswindows = [];
+    },
     addGSWindow: function(gswindow) {
         if (!gswindow) {return;}
         gswindow.gslayout = this;

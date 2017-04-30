@@ -51,6 +51,41 @@
             <summary>Select the workspace 5.</summary>
             <description>Select the workspace with id 5.</description>
         </key>
+        <key type="as" name="move-window-to-workspace-1">
+            <default>["&lt;Mod4&gt;&lt;Ctrl&gt;1"]</default>
+            <summary>Move window to workspace 1.</summary>
+            <description>Move the current window to the workspace with id 1.</description>
+        </key>
+        <key type="as" name="move-window-to-workspace-2">
+            <default>["&lt;Mod4&gt;&lt;Ctrl&gt;2"]</default>
+            <summary>Move window to workspace 2.</summary>
+            <description>Move the current window to the workspace with id 2.</description>
+        </key>
+        <key type="as" name="move-window-to-workspace-3">
+            <default>["&lt;Mod4&gt;&lt;Ctrl&gt;3"]</default>
+            <summary>Move window to workspace 3.</summary>
+            <description>Move the current window to the workspace with id 3.</description>
+        </key>
+        <key type="as" name="move-window-to-workspace-4">
+            <default>["&lt;Mod4&gt;&lt;Ctrl&gt;4"]</default>
+            <summary>Move window to workspace 4.</summary>
+            <description>Move the current window to the workspace with id 4.</description>
+        </key>
+        <key type="as" name="move-window-to-workspace-5">
+            <default>["&lt;Mod4&gt;&lt;Ctrl&gt;5"]</default>
+            <summary>Move window to workspace 5.</summary>
+            <description>Move the current window to the workspace with id 5.</description>
+        </key>
+        <key type="as" name="window-toggle-maximize">
+            <default>["&lt;Mod4&gt;m"]</default>
+            <summary>Toggle maximize.</summary>
+            <description>Toggle maximize of the current window.</description>
+        </key>
+        <key type="as" name="window-toggle-fullscreen">
+            <default>["&lt;Mod4&gt;f"]</default>
+            <summary>Toggle fullscreen.</summary>
+            <description>Toggle fullscreen of the current window.</description>
+        </key>
         <key type="as" name="launch-terminal">
             <default>["&lt;Mod4&gt;return"]</default>
             <summary>Lanch an terminal.</summary>
