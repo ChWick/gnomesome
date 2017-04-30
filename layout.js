@@ -1,15 +1,22 @@
 const Lang = imports.lang;
+const ExtensionUtils = imports.misc.extensionUtils;
+const Me = ExtensionUtils.getCurrentExtension();
+const SplitLayout = Me.imports.splitlayout;
+
+function floatingLayout(windows) {
+    // nothing to do
+}
 
 var Modes = {
-    FLOATING: {value: 0, name: "Floating"},
-    MAXIMIZED: {value: 1, name: "Maximized"},
+    FLOATING: {value: 0, name: "Floating", layout: floatingLayout},
+    VBOXLAYOUT: {value: 1, name: "VBoxLayout", layout: SplitLayout.apply},
 };
 
 const Layout = new Lang.Class({
     Name: 'Gnomesome.Layout',
 
     _init: function() {
-        this.mode = Modes.FLOATING;
+        this.mode = Modes.VBOXLAYOUT;
         this.gswindows = [];
     },
     destroy: function() {
@@ -19,22 +26,31 @@ const Layout = new Lang.Class({
         }
         this.gswindows = [];
     },
-    addGSWindow: function(gswindow) {
+    relayout: function() {
+        this.mode.layout(this.gswindows);
+    },
+    addGSWindow: function(gswindow, relayout=true) {
         if (!gswindow) {return;}
         gswindow.gslayout = this;
         var index = this.gswindows.indexOf(gswindow);
         if (index < 0) {
             // only if not in list
             this.gswindows.push(gswindow);
+            if (relayout) {
+                this.relayout();
+            }
         }
     },
-    removeGSWindow: function(gswindow) {
+    removeGSWindow: function(gswindow, relayout=true) {
         if (!gswindow) {return;}
         gswindow.gslayout = null;
         var index = this.gswindows.indexOf(gswindow);
         if (index >= 0) {
             // only if in list
             this.gswindows.splice(index, 1);
+            if (relayout) {
+                this.relayout();
+            }
         }
     },
     allWindows: function() {

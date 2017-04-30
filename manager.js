@@ -72,6 +72,21 @@ const Manager = new Lang.Class({
                 // update current display
             })
         );
+
+        Utils.connect_and_track(this, display, 'window-created',
+            Lang.bind(this, function(display, window, user_data) {
+                // force window to current monitor
+                //window.move_to_monitor(this.current_monitor_index());
+                this.current_layout().relayout();
+
+            })
+        );
+
+        Utils.connect_and_track(this, display, 'grab-op-end',
+            Lang.bind(this, function(display, screen, window, grabop, user_data) {
+                this.current_layout().relayout();
+            })
+        );
     },
     destroy: function() {
         this.releaseKeyBindings();
@@ -102,6 +117,7 @@ const Manager = new Lang.Class({
 
         this.handleKey("window-toggle-maximize",            Lang.bind(this, this.toggle_maximize));
         this.handleKey("window-toggle-fullscreen",          Lang.bind(this, this.toggle_fullscreen));
+        this.handleKey("window-toggle-floating",            Lang.bind(this, this.toggle_floating));
         this.handleKey("launch-terminal",    function() {Util.spawn(['gnome-terminal']);});
 
     },
@@ -175,6 +191,12 @@ const Manager = new Lang.Class({
         }
         this.layouts.splice(index, 0, layouts_for_monitors);
 
+        // add all existing windows
+        var windows = workspace.list_windows();
+        for (var id = 0; id < windows.length; ++id) {
+            this.window_added(workspace, windows[id]);
+        }
+
         Utils.connect_and_track(this, workspace, "window-added", Lang.bind(this, this.window_added));
         Utils.connect_and_track(this, workspace, "window-removed", Lang.bind(this, this.window_removed));
     },
@@ -199,6 +221,8 @@ const Manager = new Lang.Class({
             window.gswindow = gswindow;
             gslayout.addGSWindow(gswindow);
         }
+        gslayout.relayout()
+
     },
     window_removed: function(workspace, window) {
         global.log("[gnomesome] Window removed " + workspace.index() + " " + window.get_monitor());
@@ -223,6 +247,11 @@ const Manager = new Lang.Class({
         var cw = global.display['focus_window'];
         if (cw) {return cw.get_workspace().index();}
         else {return global.screen.get_active_workspace_index();}
+    },
+    current_layout: function() {
+        var cm = this.current_monitor_index();
+        var cw = this.current_workspace_index();
+        return this.layouts[cw][cm];
     },
     roll_window: function(offset) {
         var cw = global.display['focus_window'];
@@ -274,14 +303,15 @@ const Manager = new Lang.Class({
     toggle_maximize: function(maximize) {
         var cw = this.current_window();
         if (!cw) {return;}
+        var gswindow = cw.gswindow;
         if (maximize === true) {
-            cw.maximize(Meta.MaximizeFlags.BOTH);
+            gswindow.set_maximize(true);
         } else if (maximize === false) {
-            cw.unmaximize(Meta.MaximizeFlags.BOTH);
+            gswindow.set_maximize(false);
         } else if (cw.get_maximized()) {
-            cw.unmaximize(Meta.MaximizeFlags.BOTH);
+            gswindow.set_maximize(false);
         } else {
-            cw.maximize(Meta.MaximizeFlags.BOTH);
+            gswindow.set_maximize(true);
         }
     },
     toggle_fullscreen: function(fullscreen) {
@@ -297,4 +327,9 @@ const Manager = new Lang.Class({
             cw.make_fullscreen();
         }
     },
+    toggle_floating: function() {
+        var gw = this.current_window().gswindow;
+        gw.floating = !gw.floating;
+        this.current_layout().relayout();
+    }
 });
