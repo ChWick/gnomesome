@@ -19,7 +19,9 @@ const GSWindow = new Lang.Class({
         return this.window.get_monitor();
     },
     layoutAllowed: function() {
-        return !this.is_fullscreen() && ! this.floating;
+        var type = this.window.get_window_type();
+        var allowedWindowType = type == Meta.WindowType.NORMAL || type == Meta.WindowType.DESKTOP || type == Meta.WindowType.DIALOG;
+        return !this.is_fullscreen() && ! this.floating && allowedWindowType;
     },
     is_fullscreen: function() {
         return this.window.is_fullscreen();

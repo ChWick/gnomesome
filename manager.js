@@ -98,6 +98,8 @@ const Manager = new Lang.Class({
         //this.parent();
     },
     initKeyBindings: function() {
+        this.handleKey("next-layout",              Lang.bind(this, function() {this.current_layout().roll_layout(+1);}));
+        this.handleKey("previous-layout",          Lang.bind(this, function() {this.current_layout().roll_layout(-1);}));
         this.handleKey("next-window",              Lang.bind(this, this.next_window));
         this.handleKey("previous-window",          Lang.bind(this, this.previous_window));
         this.handleKey("next-monitor",             Lang.bind(this, function() {this.roll_monitor(+1);}));

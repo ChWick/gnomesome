@@ -1,6 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <schemalist>
     <schema id="org.gnome.shell.extensions.gnomesome.keybindings" path="/org/gnome/shell/extensions/gnomesome.keybindings/">
+        <key type="as" name="next-layout">
+            <default>["&lt;Mod4&gt;e"]</default>
+            <summary>Select the next layout.</summary>
+            <description>Select the next layout on the current monitor and workspace.</description>
+        </key>
+        <key type="as" name="previous-layout">
+            <default>["&lt;Mod4&gt;&lt;Shift&gt;e"]</default>
+            <summary>Select the previous layout.</summary>
+            <description>Select the previous layout on the current monitor and workspace.</description>
+        </key>
         <key type="as" name="next-window">
             <default>["&lt;Mod4&gt;j"]</default>
             <summary>Select the next window.</summary>
