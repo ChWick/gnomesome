@@ -107,6 +107,11 @@ const Manager = new Lang.Class({
         this.handleKey("next-monitor",             Lang.bind(this, function() {this.roll_monitor(+1);}));
         this.handleKey("previous-monitor",         Lang.bind(this, function() {this.roll_monitor(-1);}));
         this.handleKey("move-to-next-monitor",     Lang.bind(this, function() {this.roll_move_to_monitor(+1);}));
+        this.handleKey("increase-master-area",     Lang.bind(this, function() {this.current_layout().resize_master_area(0.05);}));
+        this.handleKey("decrease-master-area",     Lang.bind(this, function() {this.current_layout().resize_master_area(-0.05);}));
+        this.handleKey("increase-n-master",     Lang.bind(this, function() {this.current_layout().increment_n_master(+1);}));
+        this.handleKey("decrease-n-master",     Lang.bind(this, function() {this.current_layout().increment_n_master(-1);}));
+        this.handleKey("swap-window-with-master",  Lang.bind(this, function() {this.current_layout().set_master(this.current_window()); }));
         this.handleKey("set-workspace-1",    Lang.bind(this, function() {this.set_workspace(0);}));
         this.handleKey("set-workspace-2",    Lang.bind(this, function() {this.set_workspace(1);}));
         this.handleKey("set-workspace-3",    Lang.bind(this, function() {this.set_workspace(2);}));
@@ -276,7 +281,7 @@ const Manager = new Lang.Class({
             index = (index + offset + n) % n;
         }
         var newGSWindow = gslayout.gsWindowByIndex(index);
-        newGSWindow.window.activate(global.get_current_time());
+        if (newGSWindow) {newGSWindow.window.activate(global.get_current_time());}
     },
     next_window: function() {
         this.roll_window(+1);

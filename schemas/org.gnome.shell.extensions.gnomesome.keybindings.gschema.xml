@@ -46,6 +46,31 @@
             <summary>Move the current window to the next monitor</summary>
             <description>Move the current focused window to the next monitor on the current workspace.</description>
         </key>
+        <key type="as" name="increase-master-area">
+            <default>["&lt;Mod4&gt;i"]</default>
+            <summary>Increase the master window area.</summary>
+            <description>Move the split position of master clients to increase the master window area by 5%.</description>
+        </key>
+        <key type="as" name="decrease-master-area">
+            <default>["&lt;Mod4&gt;u"]</default>
+            <summary>Decrease the master window area.</summary>
+            <description>Move the split position of master clients to decrease the master window area by 5%.</description>
+        </key>
+        <key type="as" name="increase-n-master">
+            <default>["&lt;Mod4&gt;&lt;Shift&gt;i"]</default>
+            <summary>Increase the number of master windows.</summary>
+            <description>Increase the number of splits in the master area.</description>
+        </key>
+        <key type="as" name="decrease-n-master">
+            <default>["&lt;Mod4&gt;&lt;Shift&gt;u"]</default>
+            <summary>Decrease the number of master windows.</summary>
+            <description>Decrease the number of splits in the master area.</description>
+        </key>
+        <key type="as" name="swap-window-with-master">
+            <default>["&lt;Mod4&gt;&lt;Ctrl&gt;return"]</default>
+            <summary>Swap the current window with the master.</summary>
+            <description>Swaps the current window with the master. The number of master windows will be set to one.</description>
+        </key>
         <key type="as" name="set-workspace-1">
             <default>["&lt;Mod4&gt;1"]</default>
             <summary>Select the workspace 1.</summary>

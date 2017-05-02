@@ -4,7 +4,7 @@ const ExtensionUtils = imports.misc.extensionUtils;
 const Me = ExtensionUtils.getCurrentExtension();
 const SplitLayout = Me.imports.splitlayout;
 
-function floatingLayout(windows) {
+function floatingLayout(windows, split_pos, n_master) {
     // nothing to do
 }
 
@@ -24,6 +24,8 @@ const Layout = new GObject.Class({
     GTypeName: 'GnomesomeLayout',
     Properties: {
         'mode': GObject.ParamSpec.int('mode', 'ModeProperty', 'Mode property', GObject.ParamFlags.READWRITE, 0, NumModes - 1, Modes.FLOATING),
+        'split-pos': GObject.ParamSpec.float('split-pos', "Split position", "Position of the split", GObject.ParamFlags.READWRITE, 0.2, 0.8, 0.5),
+        'n-master': GObject.ParamSpec.int('n-master', "Number of master", "Number of master windows", GObject.ParamFlags.READWRITE, 0, 5, 1),
     },
     Signals: {
     },
@@ -31,9 +33,13 @@ const Layout = new GObject.Class({
     _init: function(params) {
         this.gswindows = [];
         this._mode = Modes.FLOATING;
+        this._split_pos = 0.5;
+        this._n_master = 1;
 
         this.parent(params);
         this.connect('notify::mode', Lang.bind(this, function () {this.relayout();}));
+        this.connect('notify::split-pos', Lang.bind(this, function () {this.relayout();}));
+        this.connect('notify::n-master', Lang.bind(this, function () {this.relayout();}));
         this.mode = Modes.VBOXLAYOUT;
     },
     destroy: function() {
@@ -43,15 +49,29 @@ const Layout = new GObject.Class({
         }
         this.gswindows = [];
     },
-    get mode() {
-        return this._mode;
+    get mode() {return this._mode;},
+    set mode(mode) { if (this._mode != mode) { this._mode = mode; this.notify("mode"); } },
+
+    get split_pos() {return this._split_pos;},
+    set split_pos(pos) {pos = Math.max(Math.min(pos, 0.8), 0.2); if (this._split_pos != pos) {this._split_pos = pos; this.notify("split-pos");}},
+    resize_master_area: function(scale) {this.split_pos += scale;},
+
+    get n_master() {return this._n_master;},
+    set n_master(n) {n = Math.max(Math.min(n, 5), 0); if (this._n_master != n) {this._n_master = n; this.notify("n-master"); } },
+    increment_n_master: function(n) {this.n_master += n;},
+
+    set_master: function(window) {
+        const gswindow = this.getGSWindowFromWindow(window);
+        if (!gswindow) {return;}
+        // remove window but dont relayout
+        this.removeGSWindow(gswindow, false);
+        // add window at front
+        this.gswindows.unshift(gswindow);
+        // set n_master to 1 and force relayout if there is no change
+        if (this.n_master != 1) {this.n_master = 1;}
+        else {this.relayout();}
     },
-    set mode(mode) {
-        if (this._mode != mode) {
-            this._mode = mode;
-            this.notify("mode");
-        }
-    },
+
     layout_name: function() {
         return Modes.properties[this.mode].name;
     },
@@ -60,7 +80,7 @@ const Layout = new GObject.Class({
     },
     relayout: function() {
         global.log("[gnomesome] Current layout " + this.layout_name());
-        this.layout()(this.gswindows);
+        this.layout()(this.gswindows, this.split_pos, this.n_master);
     },
     num_layouts: function() {
         return NumModes;

@@ -1,4 +1,4 @@
-function apply(gswindows) {
+function apply(gswindows, split_pos, n_master) {
     global.log("[gnomesome] Info: relayout max_nwindows" + gswindows.length);
     if (gswindows.length <= 0) {
         // no windows available
@@ -37,19 +37,37 @@ function apply(gswindows) {
             work_area.x, work_area.y,
             work_area.width, work_area.height);
     } else {
-        // first image half size, all others in rows
-        gswindows_to_layout[0].window.move_resize_frame(
-            user,
-            work_area.x, work_area.y,
-            work_area.width / 2, work_area.height);
+        // determine areas
+        gsmasters = gswindows_to_layout.slice(0, n_master);
+        gsclients = gswindows_to_layout.slice(n_master, gswindows_to_layout.length);
+        global.log("[gnomesome] master client" + gsmasters.length + " " + gsclients.length);
 
-        var sub_height = work_area.height / (gswindows_to_layout.length - 1);
-        for (var idx = 1; idx < gswindows_to_layout.length; ++idx) {
-            gswindows_to_layout[idx].window.move_resize_frame(
-                user,
-                work_area.x + work_area.width / 2,
-                work_area.y + (idx - 1) * sub_height,
-                work_area.width / 2, sub_height);
+        var master_width = work_area.width * split_pos;
+        if (gsclients.length == 0) {master_width = work_area.width;}
+        if (gsmasters.length == 0) {master_width = 0;}
+        var client_width = work_area.width - master_width;
+
+        if (gsmasters.length > 0) {
+            var sub_height = work_area.height / gsmasters.length;
+            for (let idx = 0; idx < gsmasters.length; ++idx) {
+                // first image half size, all others in rows
+                gsmasters[idx].window.move_resize_frame(
+                    user,
+                    work_area.x,
+                    work_area.y + idx * sub_height,
+                    master_width, sub_height);
+            }
+        }
+
+        if (gsclients.length > 0) {
+            var sub_height = work_area.height / gsclients.length;
+            for (let idx = 0; idx < gsclients.length; ++idx) {
+                gsclients[idx].window.move_resize_frame(
+                    user,
+                    work_area.x + master_width,
+                    work_area.y + idx * sub_height,
+                    client_width, sub_height);
+            }
         }
     }
 }
