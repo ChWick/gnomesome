@@ -102,6 +102,8 @@ const Manager = new Lang.Class({
         this.handleKey("previous-layout",          Lang.bind(this, function() {this.current_layout().roll_layout(-1);}));
         this.handleKey("next-window",              Lang.bind(this, this.next_window));
         this.handleKey("previous-window",          Lang.bind(this, this.previous_window));
+        this.handleKey("swap-with-next-window",            Lang.bind(this, function() {this.current_layout().swap_with_window(this.current_window(), +1);}));
+        this.handleKey("swap-with-previous-window",        Lang.bind(this, function() {this.current_layout().swap_with_window(this.current_window(), -1);}));
         this.handleKey("next-monitor",             Lang.bind(this, function() {this.roll_monitor(+1);}));
         this.handleKey("previous-monitor",         Lang.bind(this, function() {this.roll_monitor(-1);}));
         this.handleKey("move-to-next-monitor",     Lang.bind(this, function() {this.roll_move_to_monitor(+1);}));
@@ -335,5 +337,5 @@ const Manager = new Lang.Class({
         var gw = this.current_window().gswindow;
         gw.floating = !gw.floating;
         this.current_layout().relayout();
-    }
+    },
 });

@@ -21,6 +21,16 @@
             <summary>Select the previous window.</summary>
             <description>Select the previous window on the current screen and workspace.</description>
         </key>
+        <key type="as" name="swap-with-next-window">
+            <default>["&lt;Mod4&gt;&lt;Shift&gt;j"]</default>
+            <summary>Switch client with next window.</summary>
+            <description>Switch the current client with the next client in a layout.</description>
+        </key>
+        <key type="as" name="swap-with-previous-window">
+            <default>["&lt;Mod4&gt;&lt;Shift&gt;k"]</default>
+            <summary>Select the previous monitor.</summary>
+            <description>Switch the current client with the previous client in a layout.</description>
+        </key>
         <key type="as" name="next-monitor">
             <default>["&lt;Mod4&gt;&lt;Ctrl&gt;j"]</default>
             <summary>Select the next monitor.</summary>
