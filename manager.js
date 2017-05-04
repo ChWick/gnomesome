@@ -22,8 +22,8 @@ const Manager = new Lang.Class({
         let schema = extension.metadata['settings-keybindings'];
         this.gsettings = Convenience.getSettings(schema);
         this._bound_keybindings = {};
-        this.menuButton = new MenuButton.MenuButton;
-        Main.panel.addToStatusArea('gnomesome-manager', this.menuButton);
+
+        this.initIcons();
 
         this.initKeyBindings();
 
@@ -77,8 +77,8 @@ const Manager = new Lang.Class({
             Lang.bind(this, function(display, window, user_data) {
                 // force window to current monitor
                 //window.move_to_monitor(this.current_monitor_index());
-                this.current_layout().relayout();
-
+                const cl = this.current_layout();
+                if (cl) {cl.relayout();}
             })
         );
 
@@ -87,6 +87,10 @@ const Manager = new Lang.Class({
                 this.current_layout().relayout();
             })
         );
+
+        // create indicator icon
+        this.menuButton = new MenuButton.MenuButton(this);
+        Main.panel.addToStatusArea('gnomesome-manager', this.menuButton);
     },
     destroy: function() {
         this.releaseKeyBindings();
@@ -164,6 +168,19 @@ const Manager = new Lang.Class({
         }
     },
 
+    initIcons: function() {
+        // A BIT HACKY: add the shellshape icon directory to the current theme's search path,
+        // as this seems to be the only way to get symbolic icons loading properly.
+        var theme = imports.gi.Gtk.IconTheme.get_default();
+        var icon_dir = Me.dir.get_child('icons').get_child('status');
+        if(icon_dir.query_exists(null)) {
+            global.log("[gnomesome] adding icon dir: " + icon_dir.get_path());
+            theme.append_search_path(icon_dir.get_path());
+        } else {
+            global.log("[gnomesome] no icon dir found at " + icon_dir.get_path() + " - assuming globally installed");
+        }
+    },
+
     // Safely execute a callback by catching any
     // exceptions and logging the traceback and a caller-provided
     // description of the action.
@@ -196,7 +213,9 @@ const Manager = new Lang.Class({
         var workspace = global.screen.get_workspace_by_index(index);
         var layouts_for_monitors = [];
         for (var id = 0; id < global.screen.get_n_monitors(); ++id) {
-            layouts_for_monitors.push(new Layout.Layout);
+            let l = new Layout.Layout;
+            l.connect("notify::mode", Lang.bind(this, function(l) {this.menuButton.setLayout(l.properties());}));
+            layouts_for_monitors.push(l);
         }
         this.layouts.splice(index, 0, layouts_for_monitors);
 
@@ -260,6 +279,7 @@ const Manager = new Lang.Class({
     current_layout: function() {
         var cm = this.current_monitor_index();
         var cw = this.current_workspace_index();
+        if (!cw && !cm) {return null;}
         return this.layouts[cw][cm];
     },
     roll_window: function(offset) {

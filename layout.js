@@ -12,8 +12,8 @@ var Modes = {
     FLOATING: 0,
     VBOXLAYOUT: 1,
     properties: {
-        0: {value: 0, name: "Floating", layout: floatingLayout},
-        1: {value: 1, name: "VBoxLayout", layout: SplitLayout.apply},
+        0: {value: 0, name: "Floating", layout: floatingLayout, icon: "window-tile-floating-symbolic"},
+        1: {value: 1, name: "VBoxLayout", layout: SplitLayout.apply, icon: "window-tile-vertical-symbolic"},
     },
 };
 
@@ -77,6 +77,9 @@ const Layout = new GObject.Class({
     },
     layout: function() {
         return Modes.properties[this.mode].layout;
+    },
+    properties: function() {
+        return Modes.properties[this.mode];
     },
     relayout: function() {
         global.log("[gnomesome] Current layout " + this.layout_name());
