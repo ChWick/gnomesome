@@ -122,7 +122,7 @@
             <description>Move the current window to the workspace with id 5.</description>
         </key>
         <key type="as" name="window-toggle-maximize">
-            <default>["&lt;Mod4&gt;n"]</default>
+            <default>["&lt;Mod4&gt;&lt;Shift&gt;m"]</default>
             <summary>Toggle maximize.</summary>
             <description>Toggle maximize of the current window.</description>
         </key>

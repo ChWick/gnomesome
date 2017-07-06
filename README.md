@@ -24,7 +24,7 @@ Yet another gnome extension for window tiling inspired by awesome supporting mul
 * `Mod4+Ctrl+Return`: Swap the current window with the master
 * `Mod4+(1-5)`: Select the workspace with id (1-5)
 * `Mod4+Ctrl+(1-5)`: Move the current window to the workspace with id (1-5)
-* `Mod4+n`: Toggle maximize of the current window
+* `Mod4+Shift+m`: Toggle maximize of the current window
 * `Mod4+Shift+f`: Toggle fullscreen of the current window
 * `Mod4+f`: Toggle floating of the current window
 * `Mod4+return`: Launch a gnome terminal
