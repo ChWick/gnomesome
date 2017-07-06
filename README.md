@@ -28,3 +28,6 @@ Yet another gnome extension for window tiling inspired by awesome supporting mul
 * `Mod4+Shift+f`: Toggle fullscreen of the current window
 * `Mod4+f`: Toggle floating of the current window
 * `Mod4+return`: Launch a gnome terminal
+
+## Install
+To install the extension to the gnome-shell default path `~/.local/share/gnome-shell/extensions` run `make install`. To remove the extension run `make uninstall`. You need to restart gnome `Alt+F2 r` and enable the extension in the tweak tool to activate it.
