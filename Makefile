@@ -16,3 +16,9 @@ gnomesome.zip: extension
 
 clean:
 	rm -rf gnomesome.zip ./schemas/gschemas.compiled 
+
+install:
+	test -e ~/.local/share/gnome-shell/extensions/gnomesome@chwick.github.com || ln -s $(PWD) ~/.local/share/gnome-shell/extensions/gnomesome@chwick.github.com
+
+remove:
+	rm ~/.local/share/gnome-shell/extensions/gnomesome@chwick.github.com
