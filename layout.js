@@ -11,13 +11,15 @@ function floatingLayout(windows, split_pos, n_master) {
 var Modes = {
     FLOATING: 0,
     VBOXLAYOUT: 1,
+    HBOXLAYOUT: 2,
     properties: {
         0: {value: 0, name: "Floating", layout: floatingLayout, icon: "window-tile-floating-symbolic"},
-        1: {value: 1, name: "VBoxLayout", layout: SplitLayout.apply, icon: "window-tile-vertical-symbolic"},
+        1: {value: 1, name: "VBoxLayout", layout: SplitLayout.applyVBoxLayout, icon: "window-tile-vertical-symbolic"},
+        2: {value: 2, name: "HBoxLayout", layout: SplitLayout.applyHBoxLayout, icon: "window-tile-horizontal-symbolic"},
     },
 };
 
-const NumModes = 2;
+const NumModes = Object.keys(Modes.properties).length;
 
 const Layout = new GObject.Class({
     Name: 'Gnomesome.Layout',

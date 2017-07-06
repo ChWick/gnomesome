@@ -4,6 +4,7 @@ Yet another gnome extension for window tiling inspired by awesome supporting mul
 ## Current supported layouts
 * Floating
 * Vertically tiled
+* Horizontally tiled
 
 ## Keybindings
 
