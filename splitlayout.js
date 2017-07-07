@@ -97,7 +97,7 @@ function apply(gswindows, split_pos, n_master, orientation) {
                         user,
                         work_area.x + idx * sub_width,
                         work_area.y + master_height,
-                        sub_width, master_height);
+                        sub_width, client_height);
                 }
             }
         }
