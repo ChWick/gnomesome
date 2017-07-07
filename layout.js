@@ -34,7 +34,7 @@ const Layout = new GObject.Class({
 
     _init: function(params) {
         this.gswindows = [];
-        this._mode = Modes.FLOATING;
+        this._mode = Modes.VBOXLAYOUT;
         this._split_pos = 0.5;
         this._n_master = 1;
 
@@ -42,7 +42,7 @@ const Layout = new GObject.Class({
         this.connect('notify::mode', Lang.bind(this, function () {this.relayout();}));
         this.connect('notify::split-pos', Lang.bind(this, function () {this.relayout();}));
         this.connect('notify::n-master', Lang.bind(this, function () {this.relayout();}));
-        this.mode = Modes.VBOXLAYOUT;
+        this.mode = Modes.FLOATING;
     },
     destroy: function() {
         global.log("[gnomesome] Cleaning up layout.");
