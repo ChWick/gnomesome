@@ -38,8 +38,8 @@ function apply(gswindows, split_pos, n_master, orientation) {
             work_area.width, work_area.height);
     } else {
         // determine areas
-        gsmasters = gswindows_to_layout.slice(0, n_master);
-        gsclients = gswindows_to_layout.slice(n_master, gswindows_to_layout.length);
+        var gsmasters = gswindows_to_layout.slice(0, n_master);
+        var gsclients = gswindows_to_layout.slice(n_master, gswindows_to_layout.length);
         global.log("[gnomesome] master client" + gsmasters.length + " " + gsclients.length);
 
         if (orientation == 1) {
