@@ -8,6 +8,17 @@ const GSWindow = new Lang.Class({
         this.window = window;
         this.floating = false;
         this.gslayout = gslayout;
+        this.geometry = this.rect();
+    },
+    store_geometry: function() {
+        this.geometry = this.rect();
+    },
+    restore_geometry: function() {
+        this.set_maximize(false, false);
+        this.window.move_resize_frame(
+            true,
+            this.geometry.x, this.geometry.y,
+            this.geometry.width, this.geometry.height);
     },
     destroy: function() {
         this.gslayout.removeGSWindow(this);
@@ -43,5 +54,20 @@ const GSWindow = new Lang.Class({
         if (change_floating) {
             this.floating = this.is_maximized();
         }
+    },
+
+    rect: function() {
+        var r = this.window.get_frame_rect();
+        return r;
+    },
+
+    pos: function() {
+        var r = this.window.get_frame_rect();
+        return { x: r.x, y: r.y};
+    },
+
+    size: function() {
+        var r = this.window.get_frame_rect();
+        return { w: r.width, h: r.height};
     },
 });

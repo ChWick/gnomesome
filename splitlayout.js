@@ -7,20 +7,9 @@ function apply(gswindows, split_pos, n_master, orientation) {
     // check consistency and add allowed windows
     var monitor_idx = gswindows[0].get_monitor();
     var workspace = gswindows[0].get_workspace();
-    var gswindows_to_layout = [];
+    var gswindows_to_layout = gswindows;
     for (var idx = 0; idx < gswindows.length; ++idx) {
-        if (monitor_idx != gswindows[idx].get_monitor()) {
-            global.log("[gnomesome] Error: Inconsistent monitor. " + monitor_idx + " vs " + gswindows[idx].get_monitor());
-        }
-        if (workspace != gswindows[idx].get_workspace()) {
-            global.log("[gnomesome] Error: Inconsistent workspace. " + workspace.index() + " vs " + gswindows[idx].get_workspace().index());
-        }
-        // List only windows, that can be used for layout.
-        if (gswindows[idx].layoutAllowed()) {
-            gswindows_to_layout.push(gswindows[idx]);
-            // force all windows to be not maximized
-            gswindows[idx].unmaximize_if_not_floating();
-        }
+        gswindows[idx].unmaximize_if_not_floating();
     }
 
     var work_area = workspace.get_work_area_for_monitor(monitor_idx);
@@ -103,10 +92,25 @@ function apply(gswindows, split_pos, n_master, orientation) {
         }
     }
 }
+
+function enterVBoxLayout(gswindows, split_pos, n_master) {
+}
+
 function applyVBoxLayout(gswindows, split_pos, n_master) {
     apply(gswindows, split_pos, n_master, 1);
 }
 
+function exitVBoxLayout(gswindows, split_pos, n_master) {
+}
+
+
+
+function exitHBoxLayout(gswindows, split_pos, n_master) {
+}
+
 function applyHBoxLayout(gswindows, split_pos, n_master) {
     apply(gswindows, split_pos, n_master, 0);
+}
+
+function enterHBoxLayout(gswindows, split_pos, n_master) {
 }

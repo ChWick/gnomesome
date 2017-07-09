@@ -27,6 +27,7 @@ const Manager = new Lang.Class({
 
         this.initKeyBindings();
 
+        global.log("[gnomesome] Number of workspaces is " + global.screen.get_n_workspaces());
         for (var id = 0; id < global.screen.get_n_workspaces(); ++id) {
             this.prepare_workspace(id);
         }
@@ -214,6 +215,7 @@ const Manager = new Lang.Class({
         var workspace = global.screen.get_workspace_by_index(index);
         var layouts_for_monitors = [];
         for (var id = 0; id < global.screen.get_n_monitors(); ++id) {
+            global.log("[gnomesome]     Preparing monitor with index " + id + " for workspace with index " + index);
             let l = new Layout.Layout;
             l.connect("notify::mode", Lang.bind(this, function(l) {this.menuButton.setLayout(l.properties());}));
             layouts_for_monitors.push(l);
@@ -230,6 +232,7 @@ const Manager = new Lang.Class({
         Utils.connect_and_track(this, workspace, "window-removed", Lang.bind(this, this.window_removed));
     },
     remove_workspace: function (index) {
+        global.log("[gnomesome] Removing workspace with index " + index)
         var layouts_for_monitors = this.layouts[index];
         for (var lidx = 0; lidx < layouts_for_monitors.length; ++lidx) {
             layouts_for_monitors[lidx].destroy();
@@ -281,10 +284,12 @@ const Manager = new Lang.Class({
         var cm = this.current_monitor_index();
         var cw = this.current_workspace_index();
         // global.log("[gnomesome] Current cm/wm " + cm + "/" + cw);
-        if (cw >=0 && cm >= 0) {
+        global.log("[gnomesome] Current window/monitor: " + cw + "/" + cm);
+        global.log("[gnomesome] Current layout size: " + this.layouts.length);
+        if (cw !== null && cm !== null && cw >= 0 && cm >= 0) {
             return this.layouts[cw][cm];
         }
-        global.log("[gnomesome] Current monitor or current window are not set");
+        global.log("[gnomesome] Current monitor or current window are not set cw/cm: " + cw + "/" + cm);
         return null;
     },
     roll_window: function(offset) {

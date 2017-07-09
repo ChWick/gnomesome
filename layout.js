@@ -3,19 +3,43 @@ const GObject = imports.gi.GObject;
 const ExtensionUtils = imports.misc.extensionUtils;
 const Me = ExtensionUtils.getCurrentExtension();
 const SplitLayout = Me.imports.splitlayout;
-
-function floatingLayout(windows, split_pos, n_master) {
-    // nothing to do
-}
+const FloatLayout = Me.imports.floatlayout;
+const MaximizeLayout = Me.imports.maximizelayout;
 
 var Modes = {
     FLOATING: 0,
     VBOXLAYOUT: 1,
     HBOXLAYOUT: 2,
+    MAXIMIZED: 3,
     properties: {
-        0: {value: 0, name: "Floating", layout: floatingLayout, icon: "window-tile-floating-symbolic"},
-        1: {value: 1, name: "VBoxLayout", layout: SplitLayout.applyVBoxLayout, icon: "window-tile-vertical-symbolic"},
-        2: {value: 2, name: "HBoxLayout", layout: SplitLayout.applyHBoxLayout, icon: "window-tile-horizontal-symbolic"},
+        0: {
+            value: 0, name: "Floating",
+            enterLayout: FloatLayout.enterFloatingLayout,
+            exitLayout: FloatLayout.exitFloatingLayout,
+            layout: FloatLayout.updateFloatingLayout,
+            icon: "window-tile-floating-symbolic",
+        },
+        1: {
+            value: 1, name: "VBoxLayout",
+            enterLayout: SplitLayout.enterVBoxLayout,
+            exitLayout: SplitLayout.exitVBoxLayout,
+            layout: SplitLayout.applyVBoxLayout,
+            icon: "window-tile-vertical-symbolic",
+        },
+        2: {
+            value: 2, name: "HBoxLayout",
+            enterLayout: SplitLayout.enterHBoxLayout,
+            exitLayout: SplitLayout.exitHBoxLayout,
+            layout: SplitLayout.applyHBoxLayout,
+            icon: "window-tile-horizontal-symbolic",
+        },
+        3: {
+            value: 3, name: "Maximized",
+            enterLayout: MaximizeLayout.enterMaximizeLayout,
+            exitLayout: MaximizeLayout.exitMaximizeLayout,
+            layout: MaximizeLayout.updateMaximizeLayout,
+            icon: "window-tile-full-symbolic",
+        },
     },
 };
 
@@ -34,12 +58,12 @@ const Layout = new GObject.Class({
 
     _init: function(params) {
         this.gswindows = [];
-        this._mode = Modes.VBOXLAYOUT;
+        this._mode = Modes.FLOATING;
         this._split_pos = 0.5;
         this._n_master = 1;
 
         this.parent(params);
-        this.connect('notify::mode', Lang.bind(this, function () {this.relayout();}));
+        // this.connect('notify::mode', Lang.bind(this, function () {this.relayout();}));  // handled in layout_changed(from, to)
         this.connect('notify::split-pos', Lang.bind(this, function () {this.relayout();}));
         this.connect('notify::n-master', Lang.bind(this, function () {this.relayout();}));
         this.mode = Modes.FLOATING;
@@ -52,7 +76,8 @@ const Layout = new GObject.Class({
         this.gswindows = [];
     },
     get mode() {return this._mode;},
-    set mode(mode) { if (this._mode != mode) { this._mode = mode; this.notify("mode"); } },
+    set mode(mode) { if (this._mode != mode) { this.layout_changed(this._mode, mode); this._mode = mode; this.notify("mode"); } },
+    //set mode(mode) { if (this._mode != mode) { this._mode = mode; this.notify("mode"); } },
 
     get split_pos() {return this._split_pos;},
     set split_pos(pos) {pos = Math.max(Math.min(pos, 0.8), 0.2); if (this._split_pos != pos) {this._split_pos = pos; this.notify("split-pos");}},
@@ -85,15 +110,24 @@ const Layout = new GObject.Class({
     },
     relayout: function() {
         global.log("[gnomesome] Current layout " + this.layout_name());
-        this.layout()(this.gswindows, this.split_pos, this.n_master);
+        var gswindows = this.allLayoutGSWindows();
+        this.layout()(gswindows, this.split_pos, this.n_master);
+    },
+    layout_changed: function(old_mode, new_mode) {
+        global.log("[gnomesome] Layout changed from " + Modes.properties[old_mode].name
+             + " to " + Modes.properties[new_mode].name);
+        var gs_wnds = this.allLayoutGSWindows();
+        Modes.properties[old_mode].exitLayout(gs_wnds, this.split_pos, this.n_master);
+        Modes.properties[new_mode].enterLayout(gs_wnds, this.split_pos, this.n_master);
+        Modes.properties[new_mode].layout(gs_wnds, this.split_pos, this.n_master);
     },
     num_layouts: function() {
         return NumModes;
     },
     roll_layout: function(offset) {
         var next_layout_id = (this.mode + offset + this.num_layouts()) % this.num_layouts();
+        global.log("[gnomesome] Rolling layout " + Modes.properties[next_layout_id].name);
         this.mode = next_layout_id;
-        global.log("[gnomesome] New layout " + this.layout_name());
     },
     addGSWindow: function(gswindow, relayout=true) {
         if (!gswindow) {return;}
@@ -125,6 +159,15 @@ const Layout = new GObject.Class({
             windows.push(this.gswindows[idx].window);
         }
         return windows;
+    },
+    allLayoutGSWindows: function() {
+        var gswindows = [];
+        for (var idx = 0; idx < this.gswindows.length; ++idx) {
+            if (this.gswindows[idx].layoutAllowed()) {
+                gswindows.push(this.gswindows[idx]);
+            }
+        }
+        return gswindows;
     },
     allLayoutWindows: function() {
         var windows = [];
