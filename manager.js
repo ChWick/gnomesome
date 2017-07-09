@@ -198,7 +198,7 @@ const Manager = new Lang.Class({
 
     set_workspace: function (new_index, window) {
         if(new_index < 0 || new_index >= global.screen.get_n_workspaces()) {
-            global.log("No such workspace; ignoring");
+            global.log("[gnomesome] No such workspace; ignoring");
             return;
         }
         var next_workspace = global.screen.get_workspace_by_index(new_index);
@@ -210,6 +210,7 @@ const Manager = new Lang.Class({
         }
     },
     prepare_workspace: function (index) {
+        global.log("[gnomesome] Preparing workspace with index " + index)
         var workspace = global.screen.get_workspace_by_index(index);
         var layouts_for_monitors = [];
         for (var id = 0; id < global.screen.get_n_monitors(); ++id) {
@@ -279,8 +280,12 @@ const Manager = new Lang.Class({
     current_layout: function() {
         var cm = this.current_monitor_index();
         var cw = this.current_workspace_index();
-        if (!cw && !cm) {return null;}
-        return this.layouts[cw][cm];
+        // global.log("[gnomesome] Current cm/wm " + cm + "/" + cw);
+        if (cw >=0 && cm >= 0) {
+            return this.layouts[cw][cm];
+        }
+        global.log("[gnomesome] Current monitor or current window are not set");
+        return null;
     },
     roll_window: function(offset) {
         var cw = global.display['focus_window'];
