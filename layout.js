@@ -5,6 +5,7 @@ const Me = ExtensionUtils.getCurrentExtension();
 const SplitLayout = Me.imports.splitlayout;
 const FloatLayout = Me.imports.floatlayout;
 const MaximizeLayout = Me.imports.maximizelayout;
+const Utils = Me.imports.utils;
 
 var Modes = {
     FLOATING: 0,
@@ -13,33 +14,44 @@ var Modes = {
     MAXIMIZED: 3,
     properties: {
         0: {
-            value: 0, name: "Floating",
+            value: 0, name: "floating",
             enterLayout: FloatLayout.enterFloatingLayout,
             exitLayout: FloatLayout.exitFloatingLayout,
             layout: FloatLayout.updateFloatingLayout,
             icon: "window-tile-floating-symbolic",
         },
         1: {
-            value: 1, name: "VBoxLayout",
+            value: 1, name: "horizontal",
             enterLayout: SplitLayout.enterVBoxLayout,
             exitLayout: SplitLayout.exitVBoxLayout,
             layout: SplitLayout.applyVBoxLayout,
             icon: "window-tile-vertical-symbolic",
         },
         2: {
-            value: 2, name: "HBoxLayout",
+            value: 2, name: "vertical",
             enterLayout: SplitLayout.enterHBoxLayout,
             exitLayout: SplitLayout.exitHBoxLayout,
             layout: SplitLayout.applyHBoxLayout,
             icon: "window-tile-horizontal-symbolic",
         },
         3: {
-            value: 3, name: "Maximized",
+            value: 3, name: "maximized",
             enterLayout: MaximizeLayout.enterMaximizeLayout,
             exitLayout: MaximizeLayout.exitMaximizeLayout,
             layout: MaximizeLayout.updateMaximizeLayout,
             icon: "window-tile-full-symbolic",
         },
+    },
+    byName: function(name) {
+        for (var key in Modes.properties) {
+            if (Modes.properties.hasOwnProperty(key)) {
+                if (name == Modes.properties[key].name) {
+                    return key;
+                }
+            }
+        }
+        global.log("[gnomesome] Error layout with label " + name + " not found");
+        return -1;
     },
 };
 
@@ -56,19 +68,36 @@ const Layout = new GObject.Class({
     Signals: {
     },
 
-    _init: function(params) {
+    _init: function(prefs) {
+        this.parent();
         this.gswindows = [];
         this._mode = Modes.FLOATING;
         this._split_pos = 0.5;
         this._n_master = 1;
 
-        this.parent(params);
         // this.connect('notify::mode', Lang.bind(this, function () {this.relayout();}));  // handled in layout_changed(from, to)
         this.connect('notify::split-pos', Lang.bind(this, function () {this.relayout();}));
         this.connect('notify::n-master', Lang.bind(this, function () {this.relayout();}));
-        this.mode = Modes.FLOATING;
+
+        // monitor prefs
+        let update = Lang.bind(this, function() {
+            let name = prefs.DEFAULT_LAYOUT.get();
+            global.log("[gnomesome] Updating default layout to " + name);
+            let new_layout = Modes.byName(name);
+            if (this._initial) {
+                this.mode = new_layout;
+                // keep this as initial!
+                this._initial = true;
+            }
+        });
+        Utils.connect_and_track(this, prefs.DEFAULT_LAYOUT.gsettings, "changed::" + prefs.DEFAULT_LAYOUT.key, update);
+
+        // setup to initial layout
+        this._initial = true;
+        update();
     },
     destroy: function() {
+        Utils.disconnect_tracked_signals(this);
         global.log("[gnomesome] Cleaning up layout.");
         for (var gsw in this.gswindows) {
             gsw.gswindow = null;
@@ -76,7 +105,7 @@ const Layout = new GObject.Class({
         this.gswindows = [];
     },
     get mode() {return this._mode;},
-    set mode(mode) { if (this._mode != mode) { this.layout_changed(this._mode, mode); this._mode = mode; this.notify("mode"); } },
+    set mode(mode) { if (this._mode != mode) { this.layout_changed(this._mode, mode); this._mode = mode; this.notify("mode"); } this._initial = false;},
     //set mode(mode) { if (this._mode != mode) { this._mode = mode; this.notify("mode"); } },
 
     get split_pos() {return this._split_pos;},

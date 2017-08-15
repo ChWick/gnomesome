@@ -1,5 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <schemalist gettext-domain="gnome-shell-extensions">
     <schema id="org.gnome.shell.extensions.gnomesome.prefs" path="/org/gnome/shell/extensions/gnomesome/prefs/">
+        <key type="b" name="show-indicator">
+            <default>true</default>
+            <summary>Whether or not to show the indicator in the status bar.</summary>
+            <description/>
+        </key>
+        <key type="s" name="default-layout">
+            <choices>
+                <choice value="floating"/>
+                <choice value="horizontal"/>
+                <choice value="vertical"/>
+                <choice value="maximized"/>
+            </choices>
+            <default>"floating"</default>
+        </key>
     </schema>
 </schemalist>

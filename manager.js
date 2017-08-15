@@ -10,6 +10,7 @@ const Convenience = Me.imports.convenience;
 const Utils = Me.imports.utils;
 const Layout = Me.imports.layout;
 const GSWindow = Me.imports.gswindow;
+const GnomesomeSettings = Me.imports.gnomesome_settings;
 
 const Manager = new Lang.Class({
     Name: 'Gnomesome.Manager',
@@ -21,6 +22,7 @@ const Manager = new Lang.Class({
         let extension = ExtensionUtils.getCurrentExtension();
         let schema = extension.metadata['settings-keybindings'];
         this.gsettings = Convenience.getSettings(schema);
+        this.prefs = new GnomesomeSettings.Prefs();
         this._bound_keybindings = {};
 
         this.initIcons();
@@ -89,9 +91,7 @@ const Manager = new Lang.Class({
             })
         );
 
-        // create indicator icon
-        this.menuButton = new MenuButton.MenuButton(this);
-        Main.panel.addToStatusArea('gnomesome-manager', this.menuButton);
+        this.initSettingsMonitor();
     },
     destroy: function() {
         this.releaseKeyBindings();
@@ -149,6 +149,34 @@ const Manager = new Lang.Class({
                 }
             }, desc);
         }
+    },
+
+    initSettingsMonitor: function() {
+        let initial = true;
+
+        // indicator
+        let indPref = this.prefs.SHOW_INDICATOR;
+        let indUpdate = Lang.bind(this, function() {
+            let indPref = this.prefs.SHOW_INDICATOR;
+            var val = indPref.get();
+            global.log("[gnomesome] Setting show-indicator to " + val);
+            if (val) {
+                // create indicator icon
+                if (!this.menuButton) {
+                    this.menuButton = new MenuButton.MenuButton(this);
+                    Main.panel.addToStatusArea('gnomesome-manager', this.menuButton);
+                }
+            } else {
+                if (this.menuButton) {
+                    this.menuButton.destroy();
+                    this.menuButton = null;
+                }
+            }
+        });
+        Utils.connect_and_track(this, indPref.gsettings, 'changed::' + indPref.key, indUpdate);
+
+
+        indUpdate();
     },
 
     // Utility method that binds a callback to a named keypress-action.
@@ -216,7 +244,7 @@ const Manager = new Lang.Class({
         var layouts_for_monitors = [];
         for (var id = 0; id < global.screen.get_n_monitors(); ++id) {
             global.log("[gnomesome]     Preparing monitor with index " + id + " for workspace with index " + index);
-            let l = new Layout.Layout;
+            let l = new Layout.Layout(this.prefs);
             l.connect("notify::mode", Lang.bind(this, function(l) {this.menuButton.setLayout(l.properties());}));
             layouts_for_monitors.push(l);
         }
