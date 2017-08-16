@@ -9,7 +9,7 @@ const SCHEMA_ROOT = 'org.gnome.shell.extensions.gnomesome';
 const KEYBINDINGS = SCHEMA_ROOT + '.keybindings';
 const PREFS = SCHEMA_ROOT + '.prefs';
 
-function envp_with_shellshape_xdg_data_dir() {
+function envp_with_gnomesome_xdg_data_dir() {
     var xdg_data_base = Ext.dir.get_child('data');
     if(!xdg_data_base.query_exists(null)) {
         return null;
