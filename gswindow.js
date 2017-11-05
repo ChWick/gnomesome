@@ -30,6 +30,9 @@ const GSWindow = new Lang.Class({
         return this.window.get_monitor();
     },
     layoutAllowed: function() {
+        if ( this.window.get_role() == "quake" ) {
+            return false;
+        }
         var type = this.window.get_window_type();
         var allowedWindowType = type == Meta.WindowType.NORMAL || type == Meta.WindowType.DESKTOP || type == Meta.WindowType.DIALOG;
         return !this.is_fullscreen() && ! this.floating && allowedWindowType;
