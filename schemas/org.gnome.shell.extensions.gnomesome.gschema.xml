@@ -1,6 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <schemalist gettext-domain="gnome-shell-extensions">
     <schema id="org.gnome.shell.extensions.gnomesome.prefs" path="/org/gnome/shell/extensions/gnomesome/prefs/">
+        <key type="s" name="launch-terminal">
+            <default>"gnome-terminal"</default>
+            <summary>Command to launch a new terminal.</summary>
+            <description/>
+        </key>
         <key type="b" name="show-indicator">
             <default>true</default>
             <summary>Whether or not to show the indicator in the status bar.</summary>

@@ -11,6 +11,7 @@ const Utils = Me.imports.utils;
 const Layout = Me.imports.layout;
 const GSWindow = Me.imports.gswindow;
 const GnomesomeSettings = Me.imports.gnomesome_settings;
+var LaunchTerminalCmd = [];
 
 const Manager = new Lang.Class({
     Name: 'Gnomesome.Manager',
@@ -92,6 +93,7 @@ const Manager = new Lang.Class({
         );
 
         this.initSettingsMonitor();
+        this.initLaunchTerminalMonitor();
     },
     destroy: function() {
         this.releaseKeyBindings();
@@ -132,7 +134,7 @@ const Manager = new Lang.Class({
         this.handleKey("window-toggle-maximize",            Lang.bind(this, this.toggle_maximize));
         this.handleKey("window-toggle-fullscreen",          Lang.bind(this, this.toggle_fullscreen));
         this.handleKey("window-toggle-floating",            Lang.bind(this, this.toggle_floating));
-        this.handleKey("launch-terminal",    function() {Util.spawn(['gnome-terminal']);});
+        this.handleKey("launch-terminal",    function() {Util.spawn(LaunchTerminalCmd);});
 
     },
     releaseKeyBindings: function() {
@@ -177,6 +179,21 @@ const Manager = new Lang.Class({
 
 
         indUpdate();
+    },
+
+    initLaunchTerminalMonitor: function() {
+        let termPref = this.prefs.LAUNCH_TERMINAL;
+        let termUpdate = Lang.bind(this, function() {
+            let termPref = this.prefs.LAUNCH_TERMINAL;
+            var val = termPref.get();
+            var array = val.split(' '); // split string into an array of words
+            LaunchTerminalCmd = array.filter(function(x) {
+                return (x !== (undefined || null || '')); // remove empty elements
+            });
+            global.log("[gnomesome] Setting launch new terminal command to " + val);
+        });
+        Utils.connect_and_track(this, termPref.gsettings, 'changed::' + termPref.key, termUpdate);
+        termUpdate();
     },
 
     // Utility method that binds a callback to a named keypress-action.
