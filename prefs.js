@@ -45,6 +45,24 @@ function buildPrefsWidget() {
             orientation: Gtk.Orientation.HORIZONTAL,
             spacing: 20
         });
+        var label = new Gtk.Label({ label: _("Launch new terminal command:")} );
+        var textfield = new Gtk.Entry();
+        hbox.pack_start(label, false, false, 0);
+        hbox.pack_start(textfield, false, false, 0);
+        vbox.add(hbox);
+
+        var pref = settings.LAUNCH_TERMINAL;
+        textfield.set_text(pref.get());
+        textfield.connect('activate', function() {
+            pref.set(textfield.get_text());
+        });
+    })();
+
+    (function() {
+        var hbox = new Gtk.Box({
+            orientation: Gtk.Orientation.HORIZONTAL,
+            spacing: 20
+        });
 
         var checkbutton = new Gtk.CheckButton({ label: _("Show indicator in status panel") });
 

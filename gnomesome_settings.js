@@ -86,6 +86,12 @@ function Prefs() {
         get: get_string,
         set: set_string,
     };
+    this.LAUNCH_TERMINAL = {
+        key: 'launch-terminal',
+        gsettings: settings,
+        get: get_string,
+        set: set_string,
+    };
 };
 
 function initTranslations(domain) {
