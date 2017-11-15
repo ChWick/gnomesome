@@ -10,6 +10,13 @@ const GSWindow = new Lang.Class({
         this.gslayout = gslayout;
         this.geometry = this.rect();
     },
+    is_ready: function() {
+        var rect = this.rect();
+        if (rect.width == 0 || rect.height == 0) {
+            return false;
+        }
+        return true;
+    },
     store_geometry: function() {
         this.geometry = this.rect();
     },
@@ -33,6 +40,7 @@ const GSWindow = new Lang.Class({
         if ( this.window.get_role() == "quake" ) {
             return false;
         }
+        if (!this.is_ready()) {return false;}
         var type = this.window.get_window_type();
         var allowedWindowType = type == Meta.WindowType.NORMAL || type == Meta.WindowType.DESKTOP || type == Meta.WindowType.DIALOG;
         return !this.is_fullscreen() && ! this.floating && allowedWindowType;
