@@ -9,9 +9,10 @@ const MenuButton = Me.imports.menubutton;
 const Convenience = Me.imports.convenience;
 const Utils = Me.imports.utils;
 const Layout = Me.imports.layout;
-const GSWindow = Me.imports.gswindow;
+var GSWindow = Me.imports.gswindow;
 const GnomesomeSettings = Me.imports.gnomesome_settings;
 var LaunchTerminalCmd = [];
+const MainLoop = imports.mainloop;
 
 const Manager = new Lang.Class({
     Name: 'Gnomesome.Manager',
@@ -290,16 +291,34 @@ const Manager = new Lang.Class({
     window_added: function(workspace, window) {
         global.log("[gnomesome] Window added " + workspace.index() + " " + window.get_monitor());
         var gslayout = this.layouts[workspace.index()][window.get_monitor()];
+        var gswindow = window.gswindow;
         if (window.gswindow) {
             gslayout.addGSWindow(window.gswindow);
             global.log("[gnomesome] Window already registered as gswindow");
         } else {
-            var gswindow = new GSWindow.GSWindow(window, gslayout);
+            gswindow = new GSWindow.GSWindow(window, gslayout);
             window.gswindow = gswindow;
             gslayout.addGSWindow(gswindow);
         }
-        gslayout.relayout()
-
+        // attempt to relayout, but we need to wait until the window is ready
+        global.log("[gnomesome] Waiting until window is ready");
+        var attempt = function(remainingAttempts) {
+            if (gswindow.is_ready()) {
+                MainLoop.timeout_add(50, function() {
+                    gswindow.reset();
+                    gslayout.relayout();
+                    });
+            } else {
+                if (remainingAttempts == 0) {
+                    global.log("[gnomesome] To many attempts to relayout");
+                } else {
+                    MainLoop.timeout_add(10, function() {
+                        attempt(remainingAttempts - 1);
+                    });
+                }
+            }
+        };
+        attempt(50);
     },
     window_removed: function(workspace, window) {
         global.log("[gnomesome] Window removed " + workspace.index() + " " + window.get_monitor());
@@ -331,7 +350,7 @@ const Manager = new Lang.Class({
         // global.log("[gnomesome] Current cm/wm " + cm + "/" + cw);
         global.log("[gnomesome] Current window/monitor: " + cw + "/" + cm);
         global.log("[gnomesome] Current layout size: " + this.layouts.length);
-        if (cw !== null && cm !== null && cw >= 0 && cm >= 0) {
+        if (cw !== null && cm !== null && cw >= 0 && cm >= 0 && this.layouts.length > 0) {
             return this.layouts[cw][cm];
         }
         global.log("[gnomesome] Current monitor or current window are not set cw/cm: " + cw + "/" + cm);

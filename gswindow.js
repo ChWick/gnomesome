@@ -10,8 +10,13 @@ const GSWindow = new Lang.Class({
         this.gslayout = gslayout;
         this.geometry = this.rect();
     },
+    reset: function() {
+        this.floating = false;
+        this.geometry = this.rect();
+    },
     is_ready: function() {
         var rect = this.rect();
+        global.log("h " + rect.height + " w " + rect.width + " x " +rect.x + " y " + rect.y);
         if (rect.width == 0 || rect.height == 0) {
             return false;
         }
