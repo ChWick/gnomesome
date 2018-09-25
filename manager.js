@@ -125,12 +125,22 @@ const Manager = new Lang.Class({
         this.handleKey("set-workspace-3",    Lang.bind(this, function() {this.set_workspace(2);}));
         this.handleKey("set-workspace-4",    Lang.bind(this, function() {this.set_workspace(3);}));
         this.handleKey("set-workspace-5",    Lang.bind(this, function() {this.set_workspace(4);}));
+        this.handleKey("set-workspace-6",    Lang.bind(this, function() {this.set_workspace(5);}));
+        this.handleKey("set-workspace-7",    Lang.bind(this, function() {this.set_workspace(6);}));
+        this.handleKey("set-workspace-8",    Lang.bind(this, function() {this.set_workspace(7);}));
+        this.handleKey("set-workspace-9",    Lang.bind(this, function() {this.set_workspace(8);}));
+        this.handleKey("set-workspace-10",    Lang.bind(this, function() {this.set_workspace(9);}));
 
         this.handleKey("move-window-to-workspace-1", Lang.bind(this, function() {this.set_workspace(0, this.current_window());}));
         this.handleKey("move-window-to-workspace-2", Lang.bind(this, function() {this.set_workspace(1, this.current_window());}));
         this.handleKey("move-window-to-workspace-3", Lang.bind(this, function() {this.set_workspace(2, this.current_window());}));
         this.handleKey("move-window-to-workspace-4", Lang.bind(this, function() {this.set_workspace(3, this.current_window());}));
         this.handleKey("move-window-to-workspace-5", Lang.bind(this, function() {this.set_workspace(4, this.current_window());}));
+        this.handleKey("move-window-to-workspace-6", Lang.bind(this, function() {this.set_workspace(5, this.current_window());}));
+        this.handleKey("move-window-to-workspace-7", Lang.bind(this, function() {this.set_workspace(6, this.current_window());}));
+        this.handleKey("move-window-to-workspace-8", Lang.bind(this, function() {this.set_workspace(7, this.current_window());}));
+        this.handleKey("move-window-to-workspace-9", Lang.bind(this, function() {this.set_workspace(8, this.current_window());}));
+        this.handleKey("move-window-to-workspace-10", Lang.bind(this, function() {this.set_workspace(9, this.current_window());}));
 
         this.handleKey("window-toggle-maximize",            Lang.bind(this, this.toggle_maximize));
         this.handleKey("window-toggle-fullscreen",          Lang.bind(this, this.toggle_fullscreen));

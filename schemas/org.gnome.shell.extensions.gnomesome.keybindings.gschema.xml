@@ -96,6 +96,31 @@
             <summary>Select the workspace 5.</summary>
             <description>Select the workspace with id 5.</description>
         </key>
+        <key type="as" name="set-workspace-6">
+            <default>["&lt;Mod4&gt;6"]</default>
+            <summary>Select the workspace 6.</summary>
+            <description>Select the workspace with id 6.</description>
+        </key>
+        <key type="as" name="set-workspace-7">
+            <default>["&lt;Mod4&gt;7"]</default>
+            <summary>Select the workspace 7.</summary>
+            <description>Select the workspace with id 7.</description>
+        </key>
+        <key type="as" name="set-workspace-8">
+            <default>["&lt;Mod4&gt;8"]</default>
+            <summary>Select the workspace 8.</summary>
+            <description>Select the workspace with id 8.</description>
+        </key>
+        <key type="as" name="set-workspace-9">
+            <default>["&lt;Mod4&gt;9"]</default>
+            <summary>Select the workspace 9.</summary>
+            <description>Select the workspace with id 9.</description>
+        </key>
+        <key type="as" name="set-workspace-10">
+            <default>["&lt;Mod4&gt;0"]</default>
+            <summary>Select the workspace 10.</summary>
+            <description>Select the workspace with id 10.</description>
+        </key>
         <key type="as" name="move-window-to-workspace-1">
             <default>["&lt;Mod4&gt;&lt;Ctrl&gt;1"]</default>
             <summary>Move window to workspace 1.</summary>
@@ -120,6 +145,31 @@
             <default>["&lt;Mod4&gt;&lt;Ctrl&gt;5"]</default>
             <summary>Move window to workspace 5.</summary>
             <description>Move the current window to the workspace with id 5.</description>
+        </key>
+        <key type="as" name="move-window-to-workspace-6">
+            <default>["&lt;Mod4&gt;&lt;Ctrl&gt;6"]</default>
+            <summary>Move window to workspace 6.</summary>
+            <description>Move the current window to the workspace with id 6.</description>
+        </key>
+        <key type="as" name="move-window-to-workspace-7">
+            <default>["&lt;Mod4&gt;&lt;Ctrl&gt;7"]</default>
+            <summary>Move window to workspace 7.</summary>
+            <description>Move the current window to the workspace with id 7.</description>
+        </key>
+        <key type="as" name="move-window-to-workspace-8">
+            <default>["&lt;Mod4&gt;&lt;Ctrl&gt;8"]</default>
+            <summary>Move window to workspace 8.</summary>
+            <description>Move the current window to the workspace with id 8.</description>
+        </key>
+        <key type="as" name="move-window-to-workspace-9">
+            <default>["&lt;Mod4&gt;&lt;Ctrl&gt;9"]</default>
+            <summary>Move window to workspace 9.</summary>
+            <description>Move the current window to the workspace with id 9.</description>
+        </key>
+        <key type="as" name="move-window-to-workspace-10">
+            <default>["&lt;Mod4&gt;&lt;Ctrl&gt;0"]</default>
+            <summary>Move window to workspace 10.</summary>
+            <description>Move the current window to the workspace with id 10.</description>
         </key>
         <key type="as" name="window-toggle-maximize">
             <default>["&lt;Mod4&gt;&lt;Shift&gt;m"]</default>
