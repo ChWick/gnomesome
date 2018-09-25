@@ -73,7 +73,7 @@ function buildPrefsWidget() {
         checkbutton.set_active(pref.get());
         checkbutton.connect('toggled', function(sw) {
             var newval = sw.get_active();
-            if (newval != pref.get()) {
+            if (newval !== pref.get()) {
                 pref.set(newval);
             }
         });
@@ -139,6 +139,45 @@ function buildPrefsWidget() {
         vbox.add(hbox);
     })();
 
+    (function() {
+        var hbox = new Gtk.Box({
+            orientation: Gtk.Orientation.HORIZONTAL,
+            spacing: 20
+        });
+        var label = new Gtk.Label({ label: _("Inner gaps:")} );
+        var spin = new Gtk.SpinButton();
+        spin.set_range(0, 100);
+        spin.set_increments(1, 5);
+        hbox.add(label);
+        hbox.add(spin);
+        vbox.add(hbox);
+
+        var pref = settings.INNER_GAPS;
+        spin.set_value(pref.get());
+        spin.connect('value-changed', function() {
+            pref.set(spin.get_value_as_int());
+        });
+    })();
+
+    (function() {
+    		var hbox = new Gtk.Box({
+    				orientation: Gtk.Orientation.HORIZONTAL,
+    				spacing: 20
+    		});
+    		var label = new Gtk.Label({ label: _("Outer gaps:")} );
+    		var spin = new Gtk.SpinButton();
+    		spin.set_range(0, 100);
+    		spin.set_increments(1, 5);
+    		hbox.add(label);
+    		hbox.add(spin);
+    		vbox.add(hbox);
+
+    		var pref = settings.OUTER_GAPS;
+    		spin.set_value(pref.get());
+    		spin.connect('value-changed', function() {
+    				pref.set(spin.get_value_as_int());
+    		});
+    })();
 
     let sep = new Gtk.HSeparator();
     vbox.add(sep);

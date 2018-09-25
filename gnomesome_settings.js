@@ -92,6 +92,18 @@ function Prefs() {
         get: get_string,
         set: set_string,
     };
+    this.OUTER_GAPS = {
+        key: 'outer-gaps',
+        gsettings: settings,
+        get: get_int,
+        set: set_int,
+    };
+    this.INNER_GAPS = {
+        key: 'inner-gaps',
+        gsettings: settings,
+        get: get_int,
+        set: set_int,
+    };
 };
 
 function initTranslations(domain) {

@@ -188,6 +188,9 @@ const Manager = new Lang.Class({
         });
         Utils.connect_and_track(this, indPref.gsettings, 'changed::' + indPref.key, indUpdate);
 
+        Utils.connect_and_track(this, this.prefs.OUTER_GAPS.gsettings, 'changed::' + this.prefs.OUTER_GAPS.key, () => this.relayout_all());
+        Utils.connect_and_track(this, this.prefs.INNER_GAPS.gsettings, 'changed::' + this.prefs.INNER_GAPS.key, () => this.relayout_all());
+
 
         indUpdate();
     },
@@ -319,7 +322,7 @@ const Manager = new Lang.Class({
                     gslayout.relayout();
                     });
             } else {
-                if (remainingAttempts == 0) {
+                if (remainingAttempts === 0) {
                     global.log("[gnomesome] To many attempts to relayout");
                 } else {
                     MainLoop.timeout_add(10, function() {
@@ -365,6 +368,14 @@ const Manager = new Lang.Class({
         }
         global.log("[gnomesome] Current monitor or current window are not set cw/cm: " + cw + "/" + cm);
         return null;
+    },
+    relayout_all: function() {
+        global.log("[gnomesome] Relayouting all windows and workspaces");
+        for (let i = 0; i < this.layouts.length; i++) {
+            for (let j = 0; j < this.layouts[i].length; j++) {
+                this.layouts[i][j].relayout();
+            }
+        }
     },
     roll_window: function(offset) {
         var cw = global.display['focus_window'];

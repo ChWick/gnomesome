@@ -20,5 +20,13 @@
             </choices>
             <default>"floating"</default>
         </key>
+        <key name="outer-gaps" type="i">
+            <range min="0" max="100"/>
+            <default>20</default>
+        </key>
+        <key name="inner-gaps" type="i">
+            <range min="0" max="100"/>
+            <default>10</default>
+        </key>
     </schema>
 </schemalist>
