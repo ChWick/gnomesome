@@ -42,7 +42,7 @@ function apply(gswindows, split_pos, n_master, orientation) {
         if (orientation === 1) {
             // Horizontal layout
             let master_width = work_area.width * split_pos - settings.INNER_GAPS.get() / 2;
-            let client_width = work_area.width - master_width;
+            let client_width = work_area.width - master_width - settings.INNER_GAPS.get();
             if (gsclients.length === 0) {master_width = work_area.width; client_width = 0;}
             if (gsmasters.length === 0) {master_width = 0; client_width = work_area.width;}
 
@@ -63,7 +63,7 @@ function apply(gswindows, split_pos, n_master, orientation) {
                 for (let idx = 0; idx < gsclients.length; ++idx) {
                     gsclients[idx].window.move_resize_frame(
                         user,
-                        work_area.x + master_width + settings.INNER_GAPS.get() / 2,
+                        work_area.x + master_width + settings.INNER_GAPS.get(),
                         work_area.y + idx * (sub_height + settings.INNER_GAPS.get()),
                         client_width, sub_height);
                 }
@@ -71,7 +71,7 @@ function apply(gswindows, split_pos, n_master, orientation) {
         } else {
             // vertical layout
             let master_height = work_area.height * split_pos - settings.INNER_GAPS.get() / 2;
-            let client_height = work_area.height - master_height;
+            let client_height = work_area.height - master_height - settings.INNER_GAPS.get();
             if (gsclients.length === 0) {master_height = work_area.height; client_height = 0;}
             if (gsmasters.length === 0) {master_height = 0; client_height = work_area.height;}
 
@@ -93,7 +93,7 @@ function apply(gswindows, split_pos, n_master, orientation) {
                     gsclients[idx].window.move_resize_frame(
                         user,
                         work_area.x + idx * (sub_width + settings.INNER_GAPS.get()),
-                        work_area.y + master_height,
+                        work_area.y + master_height + settings.INNER_GAPS.get(),
                         sub_width, client_height);
                 }
             }
