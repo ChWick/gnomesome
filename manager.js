@@ -9,12 +9,12 @@ const MenuButton = Me.imports.menubutton;
 const Convenience = Me.imports.convenience;
 const Utils = Me.imports.utils;
 const Layout = Me.imports.layout;
-var GSWindow = Me.imports.gswindow;
+const GSWindow = Me.imports.gswindow;
 const GnomesomeSettings = Me.imports.gnomesome_settings;
 var LaunchTerminalCmd = [];
 const MainLoop = imports.mainloop;
 
-const Manager = new Lang.Class({
+var Manager = new Lang.Class({
     Name: 'Gnomesome.Manager',
 
     _init: function() {
@@ -31,25 +31,25 @@ const Manager = new Lang.Class({
 
         this.initKeyBindings();
 
-        global.log("[gnomesome] Number of workspaces is " + global.screen.get_n_workspaces());
-        for (var id = 0; id < global.screen.get_n_workspaces(); ++id) {
+        global.log("[gnomesome] Number of workspaces is " + Utils.DisplayWrapper.getWorkspaceManager().get_n_workspaces());
+        for (var id = 0; id < Utils.DisplayWrapper.getWorkspaceManager().get_n_workspaces(); ++id) {
             this.prepare_workspace(id);
         }
 
-        Utils.connect_and_track(this, global.screen, 'workspace-added',
+        Utils.connect_and_track(this, Utils.DisplayWrapper.getWorkspaceManager(), 'workspace-added',
             Lang.bind(this, function(screen, id) {
                 global.log("[gnomesome] Workspace added " + id);
                 this.prepare_workspace(id);
             })
         );
-        Utils.connect_and_track(this, global.screen, 'workspace-removed',
+        Utils.connect_and_track(this, Utils.DisplayWrapper.getWorkspaceManager(), 'workspace-removed',
             Lang.bind(this, function(screen, id) {
                 global.log("[gnomesome] Workspace removed " + id);
                 this.remove_workspace(id);
             })
         );
 
-        Utils.connect_and_track(this, global.screen, 'window-entered-monitor',
+        Utils.connect_and_track(this, Utils.DisplayWrapper.getScreen(), 'window-entered-monitor',
             Lang.bind(this, function(screen, mid, window) {
                 global.log("[gnomesome] window-entered-monitor " + mid);
                 var ws = window.get_workspace();
@@ -60,7 +60,7 @@ const Manager = new Lang.Class({
             })
         );
 
-        Utils.connect_and_track(this, global.screen, 'window-left-monitor',
+        Utils.connect_and_track(this, Utils.DisplayWrapper.getScreen(), 'window-left-monitor',
             Lang.bind(this, function(screen, mid, window) {
                 global.log("[gnomesome] window-left-monitor " + mid);
                 var ws = window.get_workspace();
@@ -71,7 +71,7 @@ const Manager = new Lang.Class({
             })
         );
 
-        var display = global.screen.get_display();
+        var display = Utils.DisplayWrapper.getScreen();
         Utils.connect_and_track(this, display, 'notify::focus-window',
             Lang.bind(this, function(display, window) {
                 // update current display
@@ -257,11 +257,11 @@ const Manager = new Lang.Class({
     },
 
     set_workspace: function (new_index, window) {
-        if(new_index < 0 || new_index >= global.screen.get_n_workspaces()) {
+        if(new_index < 0 || new_index >= Utils.DisplayWrapper.getWorkspaceManager().get_n_workspaces()) {
             global.log("[gnomesome] No such workspace; ignoring");
             return;
         }
-        var next_workspace = global.screen.get_workspace_by_index(new_index);
+        var next_workspace = Utils.DisplayWrapper.getWorkspaceManager().get_workspace_by_index(new_index);
         if(window !== undefined) {
             window.change_workspace(next_workspace);
             next_workspace.activate_with_focus(window, global.get_current_time())
@@ -271,9 +271,9 @@ const Manager = new Lang.Class({
     },
     prepare_workspace: function (index) {
         global.log("[gnomesome] Preparing workspace with index " + index)
-        var workspace = global.screen.get_workspace_by_index(index);
+        var workspace = Utils.DisplayWrapper.getWorkspaceManager().get_workspace_by_index(index);
         var layouts_for_monitors = [];
-        for (var id = 0; id < global.screen.get_n_monitors(); ++id) {
+        for (var id = 0; id < Utils.DisplayWrapper.getScreen().get_n_monitors(); ++id) {
             global.log("[gnomesome]     Preparing monitor with index " + id + " for workspace with index " + index);
             let l = new Layout.Layout(this.prefs);
             l.connect("notify::mode", Lang.bind(this, function(l) {this.menuButton.setLayout(l.properties());}));
@@ -350,12 +350,12 @@ const Manager = new Lang.Class({
     current_monitor_index: function() {
         var cw = global.display['focus_window'];
         if (cw) {return cw.get_monitor();}
-        else {return global.screen.get_current_monitor();}
+        else {return Utils.DisplayWrapper.getScreen().get_current_monitor();}
     },
     current_workspace_index: function() {
         var cw = global.display['focus_window'];
         if (cw) {return cw.get_workspace().index();}
-        else {return global.screen.get_active_workspace_index();}
+        else {return Utils.DisplayWrapper.getWorkspaceManager().get_active_workspace_index();}
     },
     current_layout: function() {
         var cm = this.current_monitor_index();
@@ -407,7 +407,7 @@ const Manager = new Lang.Class({
     roll_monitor: function(offset) {
         var monitor = this.current_monitor_index();
         var workspace = this.current_workspace_index();
-        var n_monitors = global.screen.get_n_monitors();
+        var n_monitors = Utils.DisplayWrapper.getMonitorManater().get_n_monitors();
         var next_monitor = (monitor + offset + n_monitors) % n_monitors;
         var next_gslayout = this.layouts[workspace][next_monitor];
         var newGSWindow = next_gslayout.topmostWindow();
@@ -420,7 +420,7 @@ const Manager = new Lang.Class({
     roll_move_to_monitor: function(offset) {
         var midx = this.current_monitor_index();
         var cw = global.display['focus_window'];
-        var n_monitors = global.screen.get_n_monitors();
+        var n_monitors = Utils.DisplayWrapper.getMonitorManager().get_n_monitors();
         var next_midx = (midx + offset + n_monitors) % n_monitors;
         cw.move_to_monitor(next_midx);
     },

@@ -4,6 +4,9 @@ const Tweener = imports.ui.tweener;
 const Lang = imports.lang;
 const Clutter = imports.gi.Clutter;
 const PanelMenu = imports.ui.panelMenu;
+const ExtensionUtils = imports.misc.extensionUtils;
+const Me = ExtensionUtils.getCurrentExtension();
+const Utils = Me.imports.utils;
 
 const MenuButton = new Lang.Class({
     Name: 'Gnomesome.MenuButton',
@@ -13,7 +16,7 @@ const MenuButton = new Lang.Class({
         this._manager = manager;
         this.parent(0.0, _("Gnomesome MenuButton"));
 
-        this._currentWorkspace = global.screen.get_active_workspace().index();
+        this._currentWorkspace = Utils.DisplayWrapper.getWorkspaceManager().get_active_workspace().index();
         this.statusLabel = new St.Label({ y_align: Clutter.ActorAlign.CENTER,
                                           text: "0" });
 
@@ -30,38 +33,33 @@ const MenuButton = new Lang.Class({
 
         //this.actor.add_actor(this.statusLabel);
 
-        this._screenSignals = [];
-        this._screenSignals.push(global.screen.connect_after(
+        Utils.connect_and_track(this, Utils.DisplayWrapper.getWorkspaceManager(),
             'workspace-switched',
-            Lang.bind(this, this._updateIndicator)));
-
-        this._screenSignals.push(global.screen.connect_after(
+            Lang.bind(this, this._updateIndicator));
+        Utils.connect_and_track(this, Utils.DisplayWrapper.getScreen(),
             'window-entered-monitor',
-            Lang.bind(this, this._updateIndicator)));
-
-        this._screenSignals.push(global.screen.connect_after(
+            Lang.bind(this, this._updateIndicator));
+        Utils.connect_and_track(this, Utils.DisplayWrapper.getScreen(),
             'window-left-monitor',
-            Lang.bind(this, this._updateIndicator)));
-
-        this._screenSignals.push(global.display.connect_after(
+            Lang.bind(this, this._updateIndicator));
+        Utils.connect_and_track(this, Utils.DisplayWrapper.getScreen(),
             'notify::focus-window',
-            Lang.bind(this, this._updateIndicator)));
-
-        this.actor.connect('scroll-event', Lang.bind(this, this._scrollEvent));
+            Lang.bind(this, this._updateIndicator));
+        Utils.connect_and_track(this, this.actor,
+            'scroll-event',
+            Lang.bind(this, this._scrollEvent));
 
         this._updateIndicator();
     },
     destroy: function() {
-        for (let i = 0; i < this._screenSignals.length; i++) {
-            global.screen.disconnect(this._screenSignals[i]);
-        }
+        Utils.disconnect_tracked_signals(this);
         this.parent();
     },
     setLayout: function(layout) {
         this._iconIndicator.icon_name = layout.icon;
     },
     _updateIndicator: function() {
-        this._currentWorkspace = global.screen.get_active_workspace().index();
+        this._currentWorkspace = Utils.DisplayWrapper.getWorkspaceManager().get_active_workspace().index();
         var current_window = global.display['focus-window'];
         var monitor = 0;
         if (current_window) {
