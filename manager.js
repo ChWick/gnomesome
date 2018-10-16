@@ -407,7 +407,7 @@ var Manager = new Lang.Class({
     roll_monitor: function(offset) {
         var monitor = this.current_monitor_index();
         var workspace = this.current_workspace_index();
-        var n_monitors = Utils.DisplayWrapper.getMonitorManater().get_n_monitors();
+        var n_monitors = Utils.DisplayWrapper.getScreen().get_n_monitors();
         var next_monitor = (monitor + offset + n_monitors) % n_monitors;
         var next_gslayout = this.layouts[workspace][next_monitor];
         var newGSWindow = next_gslayout.topmostWindow();
@@ -420,7 +420,7 @@ var Manager = new Lang.Class({
     roll_move_to_monitor: function(offset) {
         var midx = this.current_monitor_index();
         var cw = global.display['focus_window'];
-        var n_monitors = Utils.DisplayWrapper.getMonitorManager().get_n_monitors();
+        var n_monitors = Utils.DisplayWrapper.getScreen().get_n_monitors();
         var next_midx = (midx + offset + n_monitors) % n_monitors;
         cw.move_to_monitor(next_midx);
     },
