@@ -78,15 +78,6 @@ var Manager = new Lang.Class({
             })
         );
 
-        Utils.connect_and_track(this, display, 'window-created',
-            Lang.bind(this, function(display, window, user_data) {
-                // force window to current monitor
-                //window.move_to_monitor(this.current_monitor_index());
-                const cl = this.current_layout();
-                if (cl) {cl.relayout();}
-            })
-        );
-
         Utils.connect_and_track(this, display, 'grab-op-end',
             Lang.bind(this, function(display, screen, window, grabop, user_data) {
                 this.current_layout().relayout();

@@ -57,7 +57,7 @@ var Modes = {
 
 const NumModes = Object.keys(Modes.properties).length;
 
-const Layout = new GObject.Class({
+var Layout = new GObject.Class({
     Name: 'Gnomesome.Layout',
     GTypeName: 'GnomesomeLayout',
     Properties: {
