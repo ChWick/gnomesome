@@ -1,6 +1,14 @@
 const Lang = imports.lang;
 const Meta = imports.gi.Meta;
 
+const AllowedMetaTypes = [
+      Meta.WindowType.NORMAL,
+			Meta.WindowType.DIALOG,
+			Meta.WindowType.TOOLBAR,
+			Meta.WindowType.UTILITY,
+			Meta.WindowType.SPLASHSCREEN,
+];
+
 const GSWindow = new Lang.Class({
     Name: 'Gnomesome.Window',
 
@@ -47,8 +55,8 @@ const GSWindow = new Lang.Class({
         }
         if (!this.is_ready()) {return false;}
         var type = this.window.get_window_type();
-        var allowedWindowType = type == Meta.WindowType.NORMAL || type == Meta.WindowType.DESKTOP || type == Meta.WindowType.DIALOG;
-        return !this.is_fullscreen() && ! this.floating && allowedWindowType;
+
+        return !this.is_fullscreen() && ! this.floating && AllowedMetaTypes.indexOf(type) >= 0;
     },
     is_fullscreen: function() {
         return this.window.is_fullscreen();
