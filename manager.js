@@ -18,6 +18,10 @@ var Manager = new Lang.Class({
     Name: 'Gnomesome.Manager',
 
     _init: function() {
+        const screen = Utils.DisplayWrapper.getScreen();
+        const display = Utils.DisplayWrapper.getDisplay();
+        const workspace_manager = Utils.DisplayWrapper.getWorkspaceManager();
+
         this.layouts = [];
 
 
@@ -31,25 +35,25 @@ var Manager = new Lang.Class({
 
         this.initKeyBindings();
 
-        global.log("[gnomesome] Number of workspaces is " + Utils.DisplayWrapper.getWorkspaceManager().get_n_workspaces());
-        for (var id = 0; id < Utils.DisplayWrapper.getWorkspaceManager().get_n_workspaces(); ++id) {
+        global.log("[gnomesome] Number of workspaces is " + workspace_manager.get_n_workspaces());
+        for (var id = 0; id < workspace_manager.get_n_workspaces(); ++id) {
             this.prepare_workspace(id);
         }
 
-        Utils.connect_and_track(this, Utils.DisplayWrapper.getWorkspaceManager(), 'workspace-added',
+        Utils.connect_and_track(this, workspace_manager, 'workspace-added',
             Lang.bind(this, function(screen, id) {
                 global.log("[gnomesome] Workspace added " + id);
                 this.prepare_workspace(id);
             })
         );
-        Utils.connect_and_track(this, Utils.DisplayWrapper.getWorkspaceManager(), 'workspace-removed',
+        Utils.connect_and_track(this, workspace_manager, 'workspace-removed',
             Lang.bind(this, function(screen, id) {
                 global.log("[gnomesome] Workspace removed " + id);
                 this.remove_workspace(id);
             })
         );
 
-        Utils.connect_and_track(this, Utils.DisplayWrapper.getScreen(), 'window-entered-monitor',
+        Utils.connect_and_track(this, screen, 'window-entered-monitor',
             Lang.bind(this, function(screen, mid, window) {
                 global.log("[gnomesome] window-entered-monitor " + mid);
                 var ws = window.get_workspace();
@@ -60,7 +64,7 @@ var Manager = new Lang.Class({
             })
         );
 
-        Utils.connect_and_track(this, Utils.DisplayWrapper.getScreen(), 'window-left-monitor',
+        Utils.connect_and_track(this, screen, 'window-left-monitor',
             Lang.bind(this, function(screen, mid, window) {
                 global.log("[gnomesome] window-left-monitor " + mid);
                 var ws = window.get_workspace();
@@ -71,10 +75,18 @@ var Manager = new Lang.Class({
             })
         );
 
-        var display = Utils.DisplayWrapper.getScreen();
-        Utils.connect_and_track(this, display, 'notify::focus-window',
+        Utils.connect_and_track(this, screen, 'notify::focus-window',
             Lang.bind(this, function(display, window) {
                 // update current display
+            })
+        );
+
+        Utils.connect_and_track(this, display, 'window-created',
+            Lang.bind(this, function(display, window, user_data) {
+                // force window to current monitor
+                //window.move_to_monitor(this.current_monitor_index());
+                const cl = this.current_layout();
+                if (cl) {cl.relayout();}
             })
         );
 

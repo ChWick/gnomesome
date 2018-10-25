@@ -53,5 +53,8 @@ var DisplayWrapper = {
     },
     getMonitorManager() {
         return global.screen || Meta.MonitorManager.get();
-    }
+    },
+    getDisplay() {
+      return global.display || global.screen;
+    },
 };
