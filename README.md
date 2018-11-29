@@ -31,3 +31,6 @@ Yet another gnome extension for window tiling inspired by awesome supporting mul
 
 ## Install
 To install the extension to the gnome-shell default path `~/.local/share/gnome-shell/extensions` run `make install`. To remove the extension run `make uninstall`. You need to restart gnome `Alt+F2 r` and enable the extension in the tweak tool to activate it.
+
+To run the settings dialog you need to install clutter:
+* Ubuntu: `sudo apt install gir1.2-clutter-1.0 gir1.2-clutter-gst-3.0 gir1.2-gtkclutter-1.0`
