@@ -6,6 +6,8 @@ const SplitLayout = Me.imports.splitlayout;
 const FloatLayout = Me.imports.floatlayout;
 const MaximizeLayout = Me.imports.maximizelayout;
 const Utils = Me.imports.utils;
+const logging = Me.imports.logging;
+const logger = logging.getLogger('Gnomesome.Layout');
 
 var Modes = {
     FLOATING: 0,
@@ -50,7 +52,7 @@ var Modes = {
                 }
             }
         }
-        global.log("[gnomesome] Error layout with label " + name + " not found");
+        logger.warn("Error layout with label " + name + " not found");
         return -1;
     },
 };
@@ -82,7 +84,7 @@ var Layout = new GObject.Class({
         // monitor prefs
         let update = Lang.bind(this, function() {
             let name = prefs.DEFAULT_LAYOUT.get();
-            global.log("[gnomesome] Updating default layout to " + name);
+            logger.info("Updating default layout to " + name);
             let new_layout = Modes.byName(name);
             if (this._initial) {
                 this.mode = new_layout;
@@ -98,7 +100,7 @@ var Layout = new GObject.Class({
     },
     destroy: function() {
         Utils.disconnect_tracked_signals(this);
-        global.log("[gnomesome] Cleaning up layout.");
+        logger.info("Cleaning up layout.");
         for (var gsw in this.gswindows) {
             gsw.gswindow = null;
         }
@@ -138,14 +140,14 @@ var Layout = new GObject.Class({
         return Modes.properties[this.mode];
     },
     relayout: function() {
-        global.log("[gnomesome] Current layout " + this.layout_name());
-        var gswindows = this.allLayoutGSWindows();
+        logger.debug("Current layout " + this.layout_name());
+        const gswindows = this.allLayoutGSWindows();
         this.layout()(gswindows, this.split_pos, this.n_master);
     },
     layout_changed: function(old_mode, new_mode) {
-        global.log("[gnomesome] Layout changed from " + Modes.properties[old_mode].name
+        logger.debug("Layout changed from " + Modes.properties[old_mode].name
              + " to " + Modes.properties[new_mode].name);
-        var gs_wnds = this.allLayoutGSWindows();
+        const gs_wnds = this.allLayoutGSWindows();
         Modes.properties[old_mode].exitLayout(gs_wnds, this.split_pos, this.n_master);
         Modes.properties[new_mode].enterLayout(gs_wnds, this.split_pos, this.n_master);
         Modes.properties[new_mode].layout(gs_wnds, this.split_pos, this.n_master);
@@ -154,14 +156,14 @@ var Layout = new GObject.Class({
         return NumModes;
     },
     roll_layout: function(offset) {
-        var next_layout_id = (this.mode + offset + this.num_layouts()) % this.num_layouts();
-        global.log("[gnomesome] Rolling layout " + Modes.properties[next_layout_id].name);
+        const next_layout_id = (this.mode + offset + this.num_layouts()) % this.num_layouts();
+        logger.debug("Rolling layout " + Modes.properties[next_layout_id].name);
         this.mode = next_layout_id;
     },
     addGSWindow: function(gswindow, relayout=true) {
         if (!gswindow) {return;}
         gswindow.gslayout = this;
-        var index = this.gswindows.indexOf(gswindow);
+        const index = this.gswindows.indexOf(gswindow);
         if (index < 0) {
             // only if not in list
             this.gswindows.push(gswindow);
@@ -173,7 +175,7 @@ var Layout = new GObject.Class({
     removeGSWindow: function(gswindow, relayout=true) {
         if (!gswindow) {return;}
         gswindow.gslayout = null;
-        var index = this.gswindows.indexOf(gswindow);
+        const index = this.gswindows.indexOf(gswindow);
         if (index >= 0) {
             // only if in list
             this.gswindows.splice(index, 1);
@@ -183,14 +185,14 @@ var Layout = new GObject.Class({
         }
     },
     allWindows: function() {
-        var windows = [];
+        const windows = [];
         for (var idx = 0; idx < this.gswindows.length; ++idx) {
             windows.push(this.gswindows[idx].window);
         }
         return windows;
     },
     allLayoutGSWindows: function() {
-        var gswindows = [];
+        const gswindows = [];
         for (var idx = 0; idx < this.gswindows.length; ++idx) {
             if (this.gswindows[idx].layoutAllowed()) {
                 gswindows.push(this.gswindows[idx]);

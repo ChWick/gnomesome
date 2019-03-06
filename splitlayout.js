@@ -1,9 +1,11 @@
 const Me = imports.misc.extensionUtils.getCurrentExtension();
 const GnomesomeSettings = Me.imports.gnomesome_settings;
+const logging = Me.imports.logging;
+const logger = logging.getLogger('Gnomesome.Layout.Split');
 
 function apply(gswindows, split_pos, n_master, orientation) {
     const settings = new GnomesomeSettings.Prefs();
-    global.log("[gnomesome] Info: relayout max_nwindows" + gswindows.length);
+    logger.debug("Info: relayout max_nwindows" + gswindows.length);
     if (gswindows.length <= 0) {
         // no windows available
         return;
@@ -21,7 +23,7 @@ function apply(gswindows, split_pos, n_master, orientation) {
     work_area.y += settings.OUTER_GAPS.get();
     work_area.width -= 2 * settings.OUTER_GAPS.get();
     work_area.height -= 2 * settings.OUTER_GAPS.get();
-    global.log("[gnomesome] Info: windows to layout " + gswindows_to_layout.length);
+    logger.debug("Info: windows to layout " + gswindows_to_layout.length);
 
     var user = false;
     // handle dependend on number of windows
@@ -37,7 +39,7 @@ function apply(gswindows, split_pos, n_master, orientation) {
         // determine areas
         var gsmasters = gswindows_to_layout.slice(0, n_master);
         var gsclients = gswindows_to_layout.slice(n_master, gswindows_to_layout.length);
-        global.log("[gnomesome] master client" + gsmasters.length + " " + gsclients.length);
+        logger.debug("master client" + gsmasters.length + " " + gsclients.length);
 
         if (orientation === 1) {
             // Horizontal layout

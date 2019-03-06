@@ -1,5 +1,8 @@
 const Lang = imports.lang;
 const Meta = imports.gi.Meta;
+const Me = imports.misc.extensionUtils.getCurrentExtension();
+const logging = Me.imports.logging;
+const logger = logging.getLogger('Gnomesome.GSWindow');
 
 const AllowedMetaTypes = [
       Meta.WindowType.NORMAL,
@@ -24,7 +27,7 @@ const GSWindow = new Lang.Class({
     },
     is_ready: function() {
         var rect = this.rect();
-        global.log("h " + rect.height + " w " + rect.width + " x " +rect.x + " y " + rect.y);
+        logger.debug("Window size: h " + rect.height + " w " + rect.width + " x " +rect.x + " y " + rect.y);
         if (rect.width == 0 || rect.height == 0) {
             return false;
         }

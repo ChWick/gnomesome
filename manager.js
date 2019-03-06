@@ -13,6 +13,8 @@ const GSWindow = Me.imports.gswindow;
 const GnomesomeSettings = Me.imports.gnomesome_settings;
 var LaunchTerminalCmd = [];
 const MainLoop = imports.mainloop;
+const logging = Me.imports.logging;
+const logger = logging.getLogger('Gnomesome.Manager');
 
 var Manager = new Lang.Class({
     Name: 'Gnomesome.Manager',
@@ -35,27 +37,27 @@ var Manager = new Lang.Class({
 
         this.initKeyBindings();
 
-        global.log("[gnomesome] Number of workspaces is " + workspace_manager.get_n_workspaces());
+        logger.info("Number of workspaces is " + workspace_manager.get_n_workspaces());
         for (var id = 0; id < workspace_manager.get_n_workspaces(); ++id) {
             this.prepare_workspace(id);
         }
 
         Utils.connect_and_track(this, workspace_manager, 'workspace-added',
             Lang.bind(this, function(screen, id) {
-                global.log("[gnomesome] Workspace added " + id);
+                logger.debug("Workspace added " + id);
                 this.prepare_workspace(id);
             })
         );
         Utils.connect_and_track(this, workspace_manager, 'workspace-removed',
             Lang.bind(this, function(screen, id) {
-                global.log("[gnomesome] Workspace removed " + id);
+                logger.debug("Workspace removed " + id);
                 this.remove_workspace(id);
             })
         );
 
         Utils.connect_and_track(this, screen, 'window-entered-monitor',
             Lang.bind(this, function(screen, mid, window) {
-                global.log("[gnomesome] window-entered-monitor " + mid);
+                logger.debug("window-entered-monitor " + mid);
                 var ws = window.get_workspace();
                 if (ws && window.gswindow) {
                     var wid = ws.index();
@@ -66,7 +68,7 @@ var Manager = new Lang.Class({
 
         Utils.connect_and_track(this, screen, 'window-left-monitor',
             Lang.bind(this, function(screen, mid, window) {
-                global.log("[gnomesome] window-left-monitor " + mid);
+                logger.debug("window-left-monitor " + mid);
                 var ws = window.get_workspace();
                 if (ws && window.gswindow) {
                     var wid = ws.index();
@@ -157,7 +159,7 @@ var Manager = new Lang.Class({
             if(!this._bound_keybindings.hasOwnProperty(k)) continue;
             var desc = "unbinding key " + k;
             this._do(function() {
-                global.log(desc);
+                logger.debug(desc);
                 if (Main.wm.removeKeybinding) {
                     Main.wm.removeKeybinding(k);
                 } else {
@@ -175,7 +177,7 @@ var Manager = new Lang.Class({
         let indUpdate = Lang.bind(this, function() {
             let indPref = this.prefs.SHOW_INDICATOR;
             var val = indPref.get();
-            global.log("[gnomesome] Setting show-indicator to " + val);
+            logger.debug("Setting show-indicator to " + val);
             if (val) {
                 // create indicator icon
                 if (!this.menuButton) {
@@ -207,7 +209,7 @@ var Manager = new Lang.Class({
             LaunchTerminalCmd = array.filter(function(x) {
                 return (x !== (undefined || null || '')); // remove empty elements
             });
-            global.log("[gnomesome] Setting launch new terminal command to " + val);
+            logger.debug("Setting launch new terminal command to " + val);
         });
         Utils.connect_and_track(this, termPref.gsettings, 'changed::' + termPref.key, termUpdate);
         termUpdate();
@@ -227,7 +229,7 @@ var Manager = new Lang.Class({
             ModeType.NORMAL | ModeType.OVERVIEW,
             Lang.bind(this, function() {this._do(func, "handler for binding " + name);}));
         if(!added) {
-            global.log("[gnomesome] Error: failed to add keybinding handler for: " + name);
+            logger.error("Error: failed to add keybinding handler for: " + name);
         }
     },
 
@@ -237,10 +239,10 @@ var Manager = new Lang.Class({
         var theme = imports.gi.Gtk.IconTheme.get_default();
         var icon_dir = Me.dir.get_child('icons').get_child('status');
         if(icon_dir.query_exists(null)) {
-            global.log("[gnomesome] adding icon dir: " + icon_dir.get_path());
+            logger.debug("adding icon dir: " + icon_dir.get_path());
             theme.append_search_path(icon_dir.get_path());
         } else {
-            global.log("[gnomesome] no icon dir found at " + icon_dir.get_path() + " - assuming globally installed");
+            logger.error("no icon dir found at " + icon_dir.get_path() + " - assuming globally installed");
         }
     },
 
@@ -249,11 +251,11 @@ var Manager = new Lang.Class({
     // description of the action.
     _do: function(action, desc, fail) {
         try {
-            global.log("[gnomesome] start action: " + desc);
+            logger.debug("start action: " + desc);
             action();
             return null;
         } catch (e) {
-            global.log("[gnomesome] Uncaught error in " + desc + ": " + e + "\n" + e.stack);
+            logger.error("Uncaught error in " + desc + ": " + e + "\n" + e.stack);
             if(fail) throw e;
             return e;
         }
@@ -261,7 +263,7 @@ var Manager = new Lang.Class({
 
     set_workspace: function (new_index, window) {
         if(new_index < 0 || new_index >= Utils.DisplayWrapper.getWorkspaceManager().get_n_workspaces()) {
-            global.log("[gnomesome] No such workspace; ignoring");
+            logger.warn("No such workspace; ignoring");
             return;
         }
         var next_workspace = Utils.DisplayWrapper.getWorkspaceManager().get_workspace_by_index(new_index);
@@ -273,11 +275,11 @@ var Manager = new Lang.Class({
         }
     },
     prepare_workspace: function (index) {
-        global.log("[gnomesome] Preparing workspace with index " + index)
-        var workspace = Utils.DisplayWrapper.getWorkspaceManager().get_workspace_by_index(index);
-        var layouts_for_monitors = [];
-        for (var id = 0; id < Utils.DisplayWrapper.getScreen().get_n_monitors(); ++id) {
-            global.log("[gnomesome]     Preparing monitor with index " + id + " for workspace with index " + index);
+        logger.debug("Preparing workspace with index " + index)
+        const workspace = Utils.DisplayWrapper.getWorkspaceManager().get_workspace_by_index(index);
+        const layouts_for_monitors = [];
+        for (let id = 0; id < Utils.DisplayWrapper.getScreen().get_n_monitors(); ++id) {
+            logger.debug("Preparing monitor with index " + id + " for workspace with index " + index);
             let l = new Layout.Layout(this.prefs);
             l.connect("notify::mode", Lang.bind(this, function(l) {this.menuButton.setLayout(l.properties());}));
             layouts_for_monitors.push(l);
@@ -285,8 +287,8 @@ var Manager = new Lang.Class({
         this.layouts.splice(index, 0, layouts_for_monitors);
 
         // add all existing windows
-        var windows = workspace.list_windows();
-        for (var id = 0; id < windows.length; ++id) {
+        const windows = workspace.list_windows();
+        for (let id = 0; id < windows.length; ++id) {
             this.window_added(workspace, windows[id]);
         }
 
@@ -294,7 +296,7 @@ var Manager = new Lang.Class({
         Utils.connect_and_track(this, workspace, "window-removed", Lang.bind(this, this.window_removed));
     },
     remove_workspace: function (index) {
-        global.log("[gnomesome] Removing workspace with index " + index)
+        logger.debug("Removing workspace with index " + index)
         var layouts_for_monitors = this.layouts[index];
         for (var lidx = 0; lidx < layouts_for_monitors.length; ++lidx) {
             layouts_for_monitors[lidx].destroy();
@@ -305,19 +307,19 @@ var Manager = new Lang.Class({
 
     },
     window_added: function(workspace, window) {
-        global.log("[gnomesome] Window added " + workspace.index() + " " + window.get_monitor());
+        logger.debug("Window added " + workspace.index() + " " + window.get_monitor());
         var gslayout = this.layouts[workspace.index()][window.get_monitor()];
         var gswindow = window.gswindow;
         if (window.gswindow) {
             gslayout.addGSWindow(window.gswindow);
-            global.log("[gnomesome] Window already registered as gswindow");
+            logger.debug("Window already registered as gswindow");
         } else {
             gswindow = new GSWindow.GSWindow(window, gslayout);
             window.gswindow = gswindow;
             gslayout.addGSWindow(gswindow);
         }
         // attempt to relayout, but we need to wait until the window is ready
-        global.log("[gnomesome] Waiting until window is ready");
+        logger.debug("Waiting until window is ready");
         var attempt = function(remainingAttempts) {
             if (gswindow.is_ready()) {
                 MainLoop.timeout_add(50, function() {
@@ -326,7 +328,7 @@ var Manager = new Lang.Class({
                     });
             } else {
                 if (remainingAttempts === 0) {
-                    global.log("[gnomesome] To many attempts to relayout");
+                    logger.warn("To many attempts to relayout");
                 } else {
                     MainLoop.timeout_add(10, function() {
                         attempt(remainingAttempts - 1);
@@ -337,12 +339,12 @@ var Manager = new Lang.Class({
         attempt(50);
     },
     window_removed: function(workspace, window) {
-        global.log("[gnomesome] Window removed " + workspace.index() + " " + window.get_monitor());
+        logger.debug("Window removed " + workspace.index() + " " + window.get_monitor());
         var gslayout = this.layouts[workspace.index()][window.get_monitor()];
         if (window.gswindow) {
             gslayout.removeGSWindow(window.gswindow);
         } else {
-            // global.log("[gnomesome] Error: Window without gswindow removed");
+            // logger.warn("Error: Window without gswindow removed");
             var gswindow = gslayout.getGSWindowFromWindow(window);
             gslayout.removeGSWindow(gswindow);
         }
@@ -363,17 +365,16 @@ var Manager = new Lang.Class({
     current_layout: function() {
         var cm = this.current_monitor_index();
         var cw = this.current_workspace_index();
-        // global.log("[gnomesome] Current cm/wm " + cm + "/" + cw);
-        global.log("[gnomesome] Current window/monitor: " + cw + "/" + cm);
-        global.log("[gnomesome] Current layout size: " + this.layouts.length);
+        logger.debug("Current window/monitor: " + cw + "/" + cm);
+        logger.debug("Current layout size: " + this.layouts.length);
         if (cw !== null && cm !== null && cw >= 0 && cm >= 0 && this.layouts.length > 0) {
             return this.layouts[cw][cm];
         }
-        global.log("[gnomesome] Current monitor or current window are not set cw/cm: " + cw + "/" + cm);
+        logger.debug("Current monitor or current window are not set cw/cm: " + cw + "/" + cm);
         return null;
     },
     relayout_all: function() {
-        global.log("[gnomesome] Relayouting all windows and workspaces");
+        logger.debug("Relayouting all windows and workspaces");
         for (let i = 0; i < this.layouts.length; i++) {
             for (let j = 0; j < this.layouts[i].length; j++) {
                 this.layouts[i][j].relayout();
@@ -381,24 +382,24 @@ var Manager = new Lang.Class({
         }
     },
     roll_window: function(offset) {
-        var cw = global.display['focus_window'];
-        var monitor = this.current_monitor_index();
-        var workspace = this.current_workspace_index();
-        var gslayout = this.layouts[workspace][monitor];
-        var n = gslayout.numberOfWindows();
-        if (!cw || n == 0) {
+        const cw = global.display['focus_window'];
+        const monitor = this.current_monitor_index();
+        const workspace = this.current_workspace_index();
+        const gslayout = this.layouts[workspace][monitor];
+        const n = gslayout.numberOfWindows();
+        if (!cw || n === 0) {
             // no windows on that screen and workspace
             return;
         }
 
-        var index = gslayout.indexOfWindow(cw);
+        let index = gslayout.indexOfWindow(cw);
         if (index < 0) {
-            global.log("[gnomesome] Warning: current window is not in layout!");
+            logger.warn.log("Warning: current window is not in layout!");
             index = 0;
         } else {
             index = (index + offset + n) % n;
         }
-        var newGSWindow = gslayout.gsWindowByIndex(index);
+        const newGSWindow = gslayout.gsWindowByIndex(index);
         if (newGSWindow) {newGSWindow.window.activate(global.get_current_time());}
     },
     next_window: function() {

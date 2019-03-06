@@ -1,4 +1,7 @@
 const Meta = imports.gi.Meta;
+const Me = imports.misc.extensionUtils.getCurrentExtension();
+const logging = Me.imports.logging;
+const logger = logging.getLogger('Gnomesome.Utils');
 
 // of each added connection in `owner.bound_signals`,
 // for later cleanup in disconnect_tracked_signals().
@@ -15,7 +18,7 @@ function connect_and_track(owner, subject, name, cb, after) {
                 try {
                     return cb.apply(t,arguments);
                 } catch(e) {
-                    global.log("[gnomesome] Uncaught error in " + name + " signal handler: " + e + "\n" + e.stack);
+                    logger.error("Uncaught error in " + name + " signal handler: " + e + "\n" + e.stack);
                     throw e;
                 }
             })
@@ -39,7 +42,7 @@ function disconnect_tracked_signals(owner, subject) {
         }
     }
     if (count>0) {
-        global.log("[gnomesome] disconnected " + count + " listeners from " +
+        logger.info("disconnected " + count + " listeners from " +
                 owner + (subject == null ? "" : (" on " + subject)));
     }
 }
