@@ -103,7 +103,9 @@ var Manager = new Lang.Class({
     },
     destroy: function() {
         this.releaseKeyBindings();
-        this.menuButton.destroy();
+        if (this.menuButton != null) {
+          this.menuButton.destroy();
+        }
         Utils.disconnect_tracked_signals(this);
         while (this.layouts.length > 0) {
             this.remove_workspace(0);
@@ -281,7 +283,9 @@ var Manager = new Lang.Class({
         for (let id = 0; id < Utils.DisplayWrapper.getScreen().get_n_monitors(); ++id) {
             logger.debug("Preparing monitor with index " + id + " for workspace with index " + index);
             let l = new Layout.Layout(this.prefs);
-            l.connect("notify::mode", Lang.bind(this, function(l) {this.menuButton.setLayout(l.properties());}));
+            if (this.menuButton != null) {
+              l.connect("notify::mode", Lang.bind(this, function(l) {this.menuButton.setLayout(l.properties());}));
+            }
             layouts_for_monitors.push(l);
         }
         this.layouts.splice(index, 0, layouts_for_monitors);
