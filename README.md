@@ -1,6 +1,18 @@
 # gnomesome
 Yet another gnome extension for window tiling inspired by awesome supporting multiple workspaces and screens.
 
+### Suggested extensions to improve gnomesome
+* To remove title bars: https://extensions.gnome.org/extension/723/pixel-saver/
+* For a better multi monitor support: https://extensions.gnome.org/extension/921/multi-monitors-add-on/
+
+### Disable dash-to-dock Mod4+Digit
+By default the dash-to-dock extension of Ubuntu overrides all Mod4+[Shift]+Digit keybindings for selecting a workspace, or moving windows to a certain workspace.
+To disable these shortcuts open the deconf-Editor, navigate to `org/gnome/shell/extensions/dash-to-dock/hot-keys` and set it to `false`.
+
+### Optional: Set static workspaces
+For a better feeling and working with multiple workspaces you should set the workspaces as static:
+Open the Tweaks Tool and navigate to workspaces. Check `Static Workspaces` and change to your desired number of workspaces, e. g. 10. Also you might want to check `workspaces span displays`.
+
 ## Current supported layouts
 * Floating
 * Vertically tiled
