@@ -1,6 +1,6 @@
 SHELL := /bin/bash
 
-JS_FILES = *.js
+JS_FILES = *.js thirdparty
 
 .PHONY: clean all
 
