@@ -68,7 +68,9 @@ var GSWindow = new Lang.Class({
         }
         if (!this.is_ready()) {return false;}
         var type = this.window.get_window_type();
-        return !this.is_minimized() && !this.is_fullscreen() && ! this.floating && AllowedMetaTypes.indexOf(type) >= 0;
+        return !this.is_minimized() && !this.is_fullscreen()
+            && !this.is_attached_dialog()
+            && ! this.floating && AllowedMetaTypes.indexOf(type) >= 0;
     },
     is_fullscreen: function() {
         return this.window.is_fullscreen();
@@ -78,6 +80,9 @@ var GSWindow = new Lang.Class({
     },
     is_minimized: function() {
         return this.window.minimized;
+    },
+    is_attached_dialog: function() {
+        return this.window.is_attached_dialog();
     },
     unmaximize_if_not_floating: function() {
         if (!this.floating) {
