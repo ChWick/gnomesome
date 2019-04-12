@@ -281,11 +281,9 @@ var Manager = new Lang.Class({
         for (let id = 0; id < Utils.DisplayWrapper.getScreen().get_n_monitors(); ++id) {
             logger.debug("Preparing monitor with index " + id + " for workspace with index " + index);
             let l = new Layout.Layout(this.prefs);
-            if (this.menuButton) {
-                l.connect("notify::mode", Lang.bind(this, function(l) {
-                    this.menuButton.setLayout(l.properties());
-                }));
-            }
+            l.connect("notify::mode", Lang.bind(this, function(l) {
+                if (this.menuButton) { this.menuButton.setLayout(l.properties()); }
+            }));
             layouts_for_monitors.push(l);
         }
         this.layouts.splice(index, 0, layouts_for_monitors);
