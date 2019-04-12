@@ -1,10 +1,11 @@
 const Lang = imports.lang;
 const Meta = imports.gi.Meta;
 const Me = imports.misc.extensionUtils.getCurrentExtension();
+const Utils = Me.imports.utils;
 const logging = Me.imports.logging;
 const logger = logging.getLogger('Gnomesome.GSWindow');
 
-const AllowedMetaTypes = [
+var AllowedMetaTypes = [
       Meta.WindowType.NORMAL,
 			Meta.WindowType.DIALOG,
 			Meta.WindowType.TOOLBAR,
@@ -12,7 +13,7 @@ const AllowedMetaTypes = [
 			Meta.WindowType.SPLASHSCREEN,
 ];
 
-const GSWindow = new Lang.Class({
+var GSWindow = new Lang.Class({
     Name: 'Gnomesome.Window',
 
     _init: function(window, gslayout) {
@@ -20,6 +21,14 @@ const GSWindow = new Lang.Class({
         this.floating = false;
         this.gslayout = gslayout;
         this.geometry = this.rect();
+        Utils.connect_and_track(this, window, 'notify::minimized', Lang.bind(this, function() { this._requestRelayout(); }));
+        Utils.connect_and_track(this, window, 'notify::fullscreen', Lang.bind(this, function() { this._requestRelayout(); }));
+        // relayout on maximize/minimize leads to timeout in relayout loop
+        // window.connect('notify::maximized-horizontally', relayout_window);
+    },
+    destroy: function() {
+        logger.info("Cleaning up window.");
+        Utils.disconnect_tracked_signals(this);
     },
     reset: function() {
         this.floating = false;
@@ -45,6 +54,7 @@ const GSWindow = new Lang.Class({
     },
     destroy: function() {
         this.gslayout.removeGSWindow(this);
+        this.window.gswindow = undefined;
     },
     get_workspace: function() {
         return this.window.get_workspace();
@@ -58,14 +68,16 @@ const GSWindow = new Lang.Class({
         }
         if (!this.is_ready()) {return false;}
         var type = this.window.get_window_type();
-
-        return !this.is_fullscreen() && ! this.floating && AllowedMetaTypes.indexOf(type) >= 0;
+        return !this.is_minimized() && !this.is_fullscreen() && ! this.floating && AllowedMetaTypes.indexOf(type) >= 0;
     },
     is_fullscreen: function() {
         return this.window.is_fullscreen();
     },
     is_maximized: function() {
         return this.window.get_maximized() > 0;
+    },
+    is_minimized: function() {
+        return this.window.minimized;
     },
     unmaximize_if_not_floating: function() {
         if (!this.floating) {
@@ -97,4 +109,9 @@ const GSWindow = new Lang.Class({
         var r = this.window.get_frame_rect();
         return { w: r.width, h: r.height};
     },
+    _requestRelayout: function() {
+        if (this.gslayout) {
+            this.gslayout.relayout();
+        }
+    }
 });

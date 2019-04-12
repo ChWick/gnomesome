@@ -102,12 +102,12 @@ var Layout = new GObject.Class({
         update();
     },
     destroy: function() {
-        Utils.disconnect_tracked_signals(this);
         logger.info("Cleaning up layout.");
-        for (var gsw in this.gswindows) {
-            gsw.gswindow = null;
+        for (let gswindow of Object.values(this.gswindows)) {
+            gswindow.destroy();
         }
         this.gswindows = [];
+        Utils.disconnect_tracked_signals(this);
     },
     get mode() {return this._mode;},
     set mode(mode) { if (this._mode != mode) { this.layout_changed(this._mode, mode); this._mode = mode; this.notify("mode"); } this._initial = false;},

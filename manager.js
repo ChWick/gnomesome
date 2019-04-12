@@ -85,8 +85,6 @@ var Manager = new Lang.Class({
 
         Utils.connect_and_track(this, display, 'window-created',
             Lang.bind(this, function(display, window, user_data) {
-                // force window to current monitor
-                //window.move_to_monitor(this.current_monitor_index());
                 const cl = this.current_layout();
                 if (cl) {cl.relayout();}
             })
@@ -342,13 +340,16 @@ var Manager = new Lang.Class({
     },
     window_removed: function(workspace, window) {
         logger.debug("Window removed " + workspace.index() + " " + window.get_monitor());
-        var gslayout = this.layouts[workspace.index()][window.get_monitor()];
+        const gslayout = this.layouts[workspace.index()][window.get_monitor()];
         if (window.gswindow) {
             gslayout.removeGSWindow(window.gswindow);
         } else {
             // logger.warn("Error: Window without gswindow removed");
-            var gswindow = gslayout.getGSWindowFromWindow(window);
-            gslayout.removeGSWindow(gswindow);
+            const gswindow = gslayout.getGSWindowFromWindow(window);
+            if (gswindow) {
+                gswindow.destroy();
+                gslayout.removeGSWindow(gswindow);
+            }
         }
     },
     current_window: function() {
@@ -399,10 +400,18 @@ var Manager = new Lang.Class({
             logger.warn.log("Warning: current window is not in layout!");
             index = 0;
         } else {
-            index = (index + offset + n) % n;
+            index += offset;
         }
-        const newGSWindow = gslayout.gsWindowByIndex(index);
-        if (newGSWindow) {newGSWindow.window.activate(global.get_current_time());}
+
+        for (let attempt = 0; attempt < n; attempt++) {
+            index = (index + n) % n;
+            const newGSWindow = gslayout.gsWindowByIndex(index);
+            if (newGSWindow && !newGSWindow.is_minimized()) {
+                newGSWindow.window.activate(global.get_current_time());
+                break;
+            }
+            index += 1;
+        }
     },
     next_window: function() {
         this.roll_window(+1);

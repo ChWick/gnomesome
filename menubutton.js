@@ -12,7 +12,7 @@ const LayoutModes = Me.imports.layout.Modes;
 const PanelMenu = imports.ui.panelMenu;
 const PopupMenu = imports.ui.popupMenu;
 
-const MenuButton = new Lang.Class({
+var MenuButton = new Lang.Class({
     Name: 'Gnomesome.MenuButton',
     Extends: PanelMenu.Button,
 

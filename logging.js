@@ -1,5 +1,5 @@
 // used elsewhere in the extension to enable additional safety
-// checks that "should never happen". Set to `true` when SHELLSHAPE_DEBUG=true|1|all
+// checks that "should never happen". Set to `true` when GNOMESOME_DEBUG=true|1|all
 let PARANOID = false;
 
 const ExtensionUtils = imports.misc.extensionUtils;
@@ -17,13 +17,13 @@ function init(main) {
     const GjsAppender = log4js_gjsa.init(log4js);
     const appender = new GjsAppender();
     appender.setLayout(new log4js.PatternLayout("%-5p: %m"));
-    let shellshape_debug = GLib.getenv("GNOMESOME_DEBUG");
+    let gnomesome_debug = GLib.getenv("GNOMESOME_DEBUG");
 
     let root_level = log4js.Level.INFO;
     root_logger.addAppender(appender);
     root_logger.setLevel(root_level);
 
-    if (!shellshape_debug) {
+    if (!gnomesome_debug) {
         return;
     }
     const FileAppender = log4js_fa.init(log4js);
@@ -36,7 +36,7 @@ function init(main) {
         root_logger.addAppender(fileAppender);
     }
 
-    if (shellshape_debug === "true" || shellshape_debug === "all" || shellshape_debug === "1") {
+    if (gnomesome_debug === "true" || gnomesome_debug === "all" || gnomesome_debug === "1") {
         root_level = log4js.Level.DEBUG;
         PARANOID = true;
         root_logger.info("set log level DEBUG for gnomesome.*");
@@ -54,7 +54,7 @@ function init(main) {
         root_logger.addAppender(notificationAppender);
 
     } else {
-        const debug_topics = shellshape_debug.split(",");
+        const debug_topics = gnomesome_debug.split(",");
         debug_topics.map(function(topic) {
             const log_name = "gnomesome." + topic;
             const logger = log4js.getLogger(log_name);
