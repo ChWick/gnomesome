@@ -8,6 +8,7 @@ const GnomesomeSettingsConvenience = Ext.imports.convenience;
 const SCHEMA_ROOT = 'org.gnome.shell.extensions.gnomesome';
 const KEYBINDINGS = SCHEMA_ROOT + '.keybindings';
 const PREFS = SCHEMA_ROOT + '.prefs';
+const OVERRIDES = 'org.gnome.shell.overrides';
 
 function envp_with_gnomesome_xdg_data_dir() {
     var xdg_data_base = Ext.dir.get_child('data');
@@ -64,49 +65,68 @@ function Keybindings() {
     };
 };
 
+function settingsLoader(path) {
+    var settings = get_local_gsettings(PREFS);
+    return {
+        settings: settings,
+        get_boolean: function() { return settings.get_boolean(this.key); },
+        set_boolean: function(v) { settings.set_boolean(this.key, v); },
+        get_int: function() { return settings.get_int(this.key); },
+        set_int: function(v) { settings.set_int(this.key, v); },
+        get_string: function() { return settings.get_string(this.key); },
+        set_string: function(v) { settings.set_string(this.key, v); }
+    }
+}
+
 function Prefs() {
     var self = this;
-    var settings = this.settings = get_local_gsettings(PREFS);
-    var get_boolean = function() { return settings.get_boolean(this.key); };
-    var set_boolean = function(v) { settings.set_boolean(this.key, v); };
-    var get_int = function() { return settings.get_int(this.key); };
-    var set_int = function(v) { settings.set_int(this.key, v); };
-    var get_string = function() { return settings.get_string(this.key); };
-    var set_string = function(v) { settings.set_string(this.key, v); };
+    let l = settingsLoader(PREFS);
+    var settings = this.settings = l.settings;
 
     this.SHOW_INDICATOR = {
         key: 'show-indicator',
         gsettings: settings,
-        get: get_boolean,
-        set: set_boolean,
+        get: l.get_boolean,
+        set: l.set_boolean,
     };
     this.DEFAULT_LAYOUT = {
         key: 'default-layout',
         gsettings: settings,
-        get: get_string,
-        set: set_string,
+        get: l.get_string,
+        set: l.set_string,
     };
     this.LAUNCH_TERMINAL = {
         key: 'launch-terminal',
         gsettings: settings,
-        get: get_string,
-        set: set_string,
+        get: l.get_string,
+        set: l.set_string,
     };
     this.OUTER_GAPS = {
         key: 'outer-gaps',
         gsettings: settings,
-        get: get_int,
-        set: set_int,
+        get: l.get_int,
+        set: l.set_int,
     };
     this.INNER_GAPS = {
         key: 'inner-gaps',
         gsettings: settings,
-        get: get_int,
-        set: set_int,
+        get: l.get_int,
+        set: l.set_int,
     };
+
+    l = settingsLoader()
+    this.overrides = settingsLoader(OVERRIDES);
+
+    this.ATTACH_MODAL_DIALOGS = {
+        key: 'attach-model-dialogs',
+        gsettings: l.settings,
+        get: l.get_boolean,
+        set: l.set_boolean,
+    }
 };
 
 function initTranslations(domain) {
     GnomesomeSettingsConvenience.initTranslations(domain);
 }
 
+var prefs = new Prefs();

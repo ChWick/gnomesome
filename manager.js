@@ -30,7 +30,7 @@ var Manager = new Lang.Class({
         let extension = ExtensionUtils.getCurrentExtension();
         let schema = extension.metadata['settings-keybindings'];
         this.gsettings = Convenience.getSettings(schema);
-        this.prefs = new GnomesomeSettings.Prefs();
+        this.prefs = GnomesomeSettings.prefs;
         this._bound_keybindings = {};
 
         this.initIcons();
