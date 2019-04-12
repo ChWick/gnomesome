@@ -3,10 +3,14 @@ const Main = imports.ui.main;
 const Tweener = imports.ui.tweener;
 const Lang = imports.lang;
 const Clutter = imports.gi.Clutter;
-const PanelMenu = imports.ui.panelMenu;
 const ExtensionUtils = imports.misc.extensionUtils;
 const Me = ExtensionUtils.getCurrentExtension();
 const Utils = Me.imports.utils;
+const Shell = imports.gi.Shell;
+const LayoutModes = Me.imports.layout.Modes;
+
+const PanelMenu = imports.ui.panelMenu;
+const PopupMenu = imports.ui.popupMenu;
 
 const MenuButton = new Lang.Class({
     Name: 'Gnomesome.MenuButton',
@@ -14,7 +18,7 @@ const MenuButton = new Lang.Class({
 
     _init: function(manager){
         this._manager = manager;
-        this.parent(0.0, _("Gnomesome MenuButton"));
+        this.parent(0.0, _("Gnomesome MenuButton"), false);
 
         this._currentWorkspace = Utils.DisplayWrapper.getWorkspaceManager().get_active_workspace().index();
         this.statusLabel = new St.Label({ y_align: Clutter.ActorAlign.CENTER,
@@ -30,6 +34,34 @@ const MenuButton = new Lang.Class({
         this._iconBox.add(this._iconIndicator);
         this.actor.add_actor(this._iconBox);
         this.actor.add_style_class_name('panel-status-button');
+
+        // initialize menu
+        const addLayout = (layout) => {
+            const item = new PopupMenu.PopupBaseMenuItem();
+            const label = new St.Label({text: layout.display});
+            const icon = new St.Icon({style_class: 'popup-menu-icon', icon_name: layout.icon})
+            item.actor.add(icon, {align: St.Align.START});
+            item.actor.add(label);
+            this.menu.addMenuItem(item);
+            item.connect('activate', () => {
+                this._manager.set_current_layout_mode(layout.value);
+            });
+        };
+        for (let v of Object.values(LayoutModes.properties)) {
+            addLayout(v);
+        }
+        this.menu.addMenuItem(new PopupMenu.PopupSeparatorMenuItem());
+        const item = new PopupMenu.PopupMenuItem("Gnomesome Settings");
+        item.connect('activate', () => {
+            var uuid = "gnomesome@chwick.github.com";
+            var appSys = Shell.AppSystem.get_default();
+            var app = appSys.lookup_app('gnome-shell-extension-prefs.desktop');
+            var info = app.get_app_info();
+            var timestamp = global.display.get_current_time_roundtrip();
+            info.launch_uris(['extension:///' + uuid],
+            global.create_app_launch_context(timestamp, -1));
+        });
+        this.menu.addMenuItem(item);
 
         //this.actor.add_actor(this.statusLabel);
 

@@ -430,6 +430,9 @@ var Manager = new Lang.Class({
         var next_midx = (midx + offset + n_monitors) % n_monitors;
         cw.move_to_monitor(next_midx);
     },
+    set_current_layout_mode: function(mode) {
+        this.current_layout().mode = mode;
+    },
     toggle_maximize: function(maximize) {
         var cw = this.current_window();
         if (!cw) {return;}

@@ -9,35 +9,38 @@ const Utils = Me.imports.utils;
 const logging = Me.imports.logging;
 const logger = logging.getLogger('Gnomesome.Layout');
 
-var Modes = {
+const Gettext = imports.gettext.domain('gnomesome');
+const _ = Gettext.gettext;
+
+const Modes = {
     FLOATING: 0,
     VBOXLAYOUT: 1,
     HBOXLAYOUT: 2,
     MAXIMIZED: 3,
     properties: {
         0: {
-            value: 0, name: "floating",
+            value: 0, name: "floating", display: _("Floating"),
             enterLayout: FloatLayout.enterFloatingLayout,
             exitLayout: FloatLayout.exitFloatingLayout,
             layout: FloatLayout.updateFloatingLayout,
             icon: "window-tile-floating-symbolic",
         },
         1: {
-            value: 1, name: "horizontal",
+            value: 1, name: "horizontal", display: _("Horizontal"),
             enterLayout: SplitLayout.enterVBoxLayout,
             exitLayout: SplitLayout.exitVBoxLayout,
             layout: SplitLayout.applyVBoxLayout,
             icon: "window-tile-vertical-symbolic",
         },
         2: {
-            value: 2, name: "vertical",
+            value: 2, name: "vertical", display: _("Vertical"),
             enterLayout: SplitLayout.enterHBoxLayout,
             exitLayout: SplitLayout.exitHBoxLayout,
             layout: SplitLayout.applyHBoxLayout,
             icon: "window-tile-horizontal-symbolic",
         },
         3: {
-            value: 3, name: "maximized",
+            value: 3, name: "maximized", display: _("Maximized"),
             enterLayout: MaximizeLayout.enterMaximizeLayout,
             exitLayout: MaximizeLayout.exitMaximizeLayout,
             layout: MaximizeLayout.updateMaximizeLayout,
