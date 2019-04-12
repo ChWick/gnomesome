@@ -33,6 +33,8 @@ Open the Tweaks Tool and navigate to workspaces. Check `Static Workspaces` and c
 * `Mod4+Ctrl+j`: Select the next monitor
 * `Mod4+Ctrl+k`: Select the previous monitor
 * `Mod4+o`: Move the active window to the next monitor
+* `Mod4+Ctrl+Shift+j`: Move the active window to the next monitor
+* `Mod4+Ctrl+Shift+k`: Move the active window to the previous monitor
 * `Mod4+i`: Increase the master window area
 * `Mod4+u`: Decrease the master window area
 * `Mod4+Shift+i`: Increase the number of master windows

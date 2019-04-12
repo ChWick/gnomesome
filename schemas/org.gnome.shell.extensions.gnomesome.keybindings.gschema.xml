@@ -41,10 +41,20 @@
             <summary>Select the previous monitor.</summary>
             <description>Select the topmost window on the previous screen and current workspace.</description>
         </key>
-        <key type="as" name="move-to-next-monitor">
+        <key type="as" name="move-to-next-monitor-alt">
             <default>["&lt;Mod4&gt;o"]</default>
             <summary>Move the current window to the next monitor</summary>
             <description>Move the current focused window to the next monitor on the current workspace.</description>
+        </key>
+        <key type="as" name="move-to-next-monitor">
+            <default>["&lt;Mod4&gt;&lt;Ctrl&gt;&lt;Shift&gt;j"]</default>
+            <summary>Move the current window to the next monitor</summary>
+            <description>Move the current focused window to the next monitor on the current workspace.</description>
+        </key>
+        <key type="as" name="move-to-previous-monitor">
+            <default>["&lt;Mod4&gt;&lt;Ctrl&gt;&lt;Shift&gt;k"]</default>
+            <summary>Move the current window to the previous monitor</summary>
+            <description>Move the current focused window to the previous monitor on the current workspace.</description>
         </key>
         <key type="as" name="increase-master-area">
             <default>["&lt;Mod4&gt;i"]</default>

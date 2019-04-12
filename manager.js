@@ -117,7 +117,9 @@ var Manager = new Lang.Class({
         this.handleKey("swap-with-previous-window",        Lang.bind(this, function() {this.current_layout().swap_with_window(this.current_window(), -1);}));
         this.handleKey("next-monitor",             Lang.bind(this, function() {this.roll_monitor(+1);}));
         this.handleKey("previous-monitor",         Lang.bind(this, function() {this.roll_monitor(-1);}));
+        this.handleKey("move-to-next-monitor-alt", Lang.bind(this, function() {this.roll_move_to_monitor(+1);}));
         this.handleKey("move-to-next-monitor",     Lang.bind(this, function() {this.roll_move_to_monitor(+1);}));
+        this.handleKey("move-to-previous-monitor", Lang.bind(this, function() {this.roll_move_to_monitor(-1);}));
         this.handleKey("increase-master-area",     Lang.bind(this, function() {this.current_layout().resize_master_area(0.05);}));
         this.handleKey("decrease-master-area",     Lang.bind(this, function() {this.current_layout().resize_master_area(-0.05);}));
         this.handleKey("increase-n-master",     Lang.bind(this, function() {this.current_layout().increment_n_master(+1);}));
