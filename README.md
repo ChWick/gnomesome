@@ -1,4 +1,8 @@
 # gnomesome
+
+[![paypal](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=H4Q5TXRLXM4LE&source=url)
+
+
 Yet another gnome extension for window tiling inspired by awesome supporting multiple workspaces and screens.
 
 ### Suggested extensions to improve gnomesome
