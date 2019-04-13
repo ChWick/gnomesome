@@ -11,6 +11,26 @@
             <summary>Select the previous layout.</summary>
             <description>Select the previous layout on the current monitor and workspace.</description>
         </key>
+        <key type="as" name="layout-horizontal">
+            <default>["&lt;Mod4&gt;&lt;Ctrl&gt;h"]</default>
+            <summary>Switch to horizontal layout</summary>
+            <description>Change the layout of the current monitor and workspace to horizontal.</description>
+        </key>
+        <key type="as" name="layout-vertical">
+            <default>["&lt;Mod4&gt;&lt;Ctrl&gt;v"]</default>
+            <summary>Switch to vertical layout</summary>
+            <description>Change the layout of the current monitor and workspace to vertical.</description>
+        </key>
+        <key type="as" name="layout-floating">
+            <default>["&lt;Mod4&gt;&lt;Ctrl&gt;f"]</default>
+            <summary>Switch to floating layout</summary>
+            <description>Change the layout of the current monitor and workspace to floating.</description>
+        </key>
+        <key type="as" name="layout-maximized">
+            <default>["&lt;Mod4&gt;&lt;Ctrl&gt;m"]</default>
+            <summary>Switch to maximized layout</summary>
+            <description>Change the layout of the current monitor and workspace to maximized.</description>
+        </key>
         <key type="as" name="next-window">
             <default>["&lt;Mod4&gt;j"]</default>
             <summary>Select the next window.</summary>

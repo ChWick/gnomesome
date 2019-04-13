@@ -116,6 +116,11 @@ var Manager = new Lang.Class({
     initKeyBindings: function() {
         this.handleKey("next-layout",              Lang.bind(this, function() {this.current_layout().roll_layout(+1);}));
         this.handleKey("previous-layout",          Lang.bind(this, function() {this.current_layout().roll_layout(-1);}));
+        this.handleKey("layout-horizontal",        Lang.bind(this, function() {this.current_layout().mode = Layout.Modes.HBOXLAYOUT;}));
+        this.handleKey("layout-vertical",          Lang.bind(this, function() {this.current_layout().mode = Layout.Modes.VBOXLAYOUT;}));
+        this.handleKey("layout-floating",          Lang.bind(this, function() {this.current_layout().mode = Layout.Modes.FLOATING;}));
+        this.handleKey("layout-maximized",         Lang.bind(this, function() {this.current_layout().mode = Layout.Modes.MAXIMIZED;}));
+
         this.handleKey("next-window",              Lang.bind(this, this.next_window));
         this.handleKey("previous-window",          Lang.bind(this, this.previous_window));
         this.handleKey("swap-with-next-window",            Lang.bind(this, function() {this.current_layout().swap_with_window(this.current_window(), +1);}));

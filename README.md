@@ -26,6 +26,10 @@ Open the Tweaks Tool and navigate to workspaces. Check `Static Workspaces` and c
 
 * `Mod4+e`: Select the next layout on the current monitor and workspace
 * `Mod4+Shift+e`: Select the previous layout on the current monitor and workspace
+* `Mod4+Ctrl+f`: Switch to the floating layout
+* `Mod4+Ctrl+h`: Switch to the horizontal box layout
+* `Mod4+Ctrl+v`: Switch to the vertical box layout
+* `Mod4+Ctrl+m`: Switch to the maximized layout
 * `Mod4+j`: Select the next window on the current monitor and workspace
 * `Mod4+k`: Select the previous window on the current monitor and workspace
 * `Mod4+Shift+j`: Swap the current client with the next client in a layout
