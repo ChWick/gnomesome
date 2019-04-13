@@ -16,6 +16,11 @@ const MainLoop = imports.mainloop;
 const logging = Me.imports.logging;
 const logger = logging.getLogger('Gnomesome.Manager');
 
+
+current_window = function() {
+    return global.display['focus_window'];
+};
+
 var Manager = new Lang.Class({
     Name: 'Gnomesome.Manager',
 
@@ -283,6 +288,8 @@ var Manager = new Lang.Class({
             let l = new Layout.Layout(this.prefs);
             l.connect("notify::mode", Lang.bind(this, function(l) {
                 if (this.menuButton) { this.menuButton.setLayout(l.properties()); }
+                const cw = this.current_window();
+                if (cw.gswindow) { cw.gswindow.center_pointer(); }
             }));
             layouts_for_monitors.push(l);
         }
@@ -327,6 +334,9 @@ var Manager = new Lang.Class({
                 MainLoop.timeout_add(50, function() {
                     gswindow.reset();
                     gslayout.relayout();
+                    if (gswindow.window === current_window()) {
+                        gswindow.center_pointer();
+                    }
                     });
             } else {
                 if (remainingAttempts === 0) {
@@ -355,7 +365,7 @@ var Manager = new Lang.Class({
         }
     },
     current_window: function() {
-        return global.display['focus_window'];
+        return current_window();
     },
     current_monitor_index: function() {
         var cw = global.display['focus_window'];
@@ -409,11 +419,12 @@ var Manager = new Lang.Class({
             index = (index + n) % n;
             const newGSWindow = gslayout.gsWindowByIndex(index);
             if (newGSWindow && !newGSWindow.is_minimized()) {
-                newGSWindow.window.activate(global.get_current_time());
+                newGSWindow.activate();
                 break;
             }
             index += 1;
         }
+
     },
     next_window: function() {
         this.roll_window(+1);
@@ -430,7 +441,7 @@ var Manager = new Lang.Class({
         var newGSWindow = next_gslayout.topmostWindow();
         if (newGSWindow) {
             // check if there is a window on that workspace
-            newGSWindow.window.activate(global.get_current_time());
+            newGSWindow.activate();
         }
 
     },
@@ -440,6 +451,7 @@ var Manager = new Lang.Class({
         var n_monitors = Utils.DisplayWrapper.getScreen().get_n_monitors();
         var next_midx = (midx + offset + n_monitors) % n_monitors;
         cw.move_to_monitor(next_midx);
+        if (cw.gswindow) { cw.gswindow.center_pointer(); }
     },
     set_current_layout_mode: function(mode) {
         this.current_layout().mode = mode;

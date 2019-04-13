@@ -79,6 +79,27 @@ function buildPrefsWidget() {
         });
     })();
 
+    (function() {
+        var hbox = new Gtk.Box({
+            orientation: Gtk.Orientation.HORIZONTAL,
+            spacing: 20
+        });
+
+        var checkbutton = new Gtk.CheckButton({ label: _("Pointer follows focus") });
+
+        hbox.pack_end(checkbutton, true, true, 0);
+        vbox.add(hbox);
+
+        var pref = settings.POINTER_FOLLOWS_FOCUS;
+        checkbutton.set_active(pref.get());
+        checkbutton.connect('toggled', function(sw) {
+            var newval = sw.get_active();
+            if (newval !== pref.get()) {
+                pref.set(newval);
+            }
+        });
+    })();
+
     // Tiling
     // ===============================================================
     

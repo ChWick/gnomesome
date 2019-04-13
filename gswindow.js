@@ -4,6 +4,8 @@ const Me = imports.misc.extensionUtils.getCurrentExtension();
 const Utils = Me.imports.utils;
 const logging = Me.imports.logging;
 const logger = logging.getLogger('Gnomesome.GSWindow');
+const Gdk = imports.gi.Gdk;
+const prefs = Me.imports.gnomesome_settings.prefs;
 
 var AllowedMetaTypes = [
       Meta.WindowType.NORMAL,
@@ -104,19 +106,36 @@ var GSWindow = new Lang.Class({
         var r = this.window.get_frame_rect();
         return r;
     },
-
     pos: function() {
         var r = this.window.get_frame_rect();
         return { x: r.x, y: r.y};
     },
-
     size: function() {
         var r = this.window.get_frame_rect();
         return { w: r.width, h: r.height};
+    },
+    center: function() {
+        var r = this.window.get_frame_rect();
+        return { x: r.x + r.width / 2, y: r.y + r.height / 2};
     },
     _requestRelayout: function() {
         if (this.gslayout) {
             this.gslayout.relayout();
         }
+    },
+    activate: function(center_pointer = true) {
+        this.window.activate(global.get_current_time());
+        if (center_pointer) {
+            this.center_pointer();
+        }
+    },
+    center_pointer: function() {
+        if (!prefs.POINTER_FOLLOWS_FOCUS.get()) { return; }
+        const display = Gdk.Display.get_default();
+        const deviceManager = display.get_device_manager();
+        const pointer = deviceManager.get_client_pointer();
+        const [screen, pointerX, pointerY] = pointer.get_position();
+        const p = this.center();
+        pointer.warp(screen, p.x, p.y);
     }
 });

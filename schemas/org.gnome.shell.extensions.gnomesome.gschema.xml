@@ -28,5 +28,10 @@
             <range min="0" max="100"/>
             <default>10</default>
         </key>
+        <key type="b" name="pointer-follows-focus">
+            <default>false</default>
+            <summary>Whether or not the pointer follows the focused window (centers)</summary>
+            <description></description>
+        </key>
     </schema>
 </schemalist>

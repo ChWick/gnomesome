@@ -246,31 +246,32 @@ var Layout = new GObject.Class({
         return this.gswindows[index];
     },
     swap_with_window: function(window, offset) {
-        var gswindow = this.getGSWindowFromWindow(window);
+        const gswindow = this.getGSWindowFromWindow(window);
         // do nothing if the current window is not in a true layout
         if (!gswindow || !gswindow.layoutAllowed()) {return;}
 
-        var idx = 0;
+        let idx = 0;
         for (; idx < this.gswindows.length; ++idx) {
-            if (this.gswindows[idx] == gswindow) {
+            if (this.gswindows[idx] === gswindow) {
                 break;
             }
         }
-        var oidx;
+        let oidx;
         for (oidx = (idx + offset + this.gswindows.length) % this.gswindows.length;
-             oidx != idx;
+             oidx !== idx;
              oidx = (oidx + offset + this.gswindows.length) % this.gswindows.length) {
             // find next window in layout
             if (this.gswindows[oidx].layoutAllowed()) {
                 break;
             }
         }
-        if (idx == oidx) {
+        if (idx === oidx) {
             // same window
             return;
         }
         this.gswindows[idx] = this.gswindows[oidx];
         this.gswindows[oidx] = gswindow;
         this.relayout();
+        gswindow.center_pointer();
     }
 });

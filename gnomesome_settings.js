@@ -8,7 +8,6 @@ const GnomesomeSettingsConvenience = Ext.imports.convenience;
 const SCHEMA_ROOT = 'org.gnome.shell.extensions.gnomesome';
 const KEYBINDINGS = SCHEMA_ROOT + '.keybindings';
 const PREFS = SCHEMA_ROOT + '.prefs';
-const OVERRIDES = 'org.gnome.shell.overrides';
 
 function envp_with_gnomesome_xdg_data_dir() {
     var xdg_data_base = Ext.dir.get_child('data');
@@ -113,16 +112,12 @@ function Prefs() {
         get: l.get_int,
         set: l.set_int,
     };
-
-    l = settingsLoader()
-    this.overrides = settingsLoader(OVERRIDES);
-
-    this.ATTACH_MODAL_DIALOGS = {
-        key: 'attach-model-dialogs',
-        gsettings: l.settings,
+    this.POINTER_FOLLOWS_FOCUS = {
+        key: 'pointer-follows-focus',
+        gsettings: settings,
         get: l.get_boolean,
         set: l.set_boolean,
-    }
+    };
 };
 
 function initTranslations(domain) {

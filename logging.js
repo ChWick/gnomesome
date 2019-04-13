@@ -43,7 +43,7 @@ function init(main) {
 
         const NotificationAppender = function NotificationAppender() { };
         NotificationAppender.prototype = new log4js.Appender();
-        NotificationAppender.prototype.layout = new log4js.PatternLayout("%c: %m");
+        NotificationAppender.prototype.layout = new log4js.PatternLayout("[gnomesome] %c: %m");
         NotificationAppender.prototype.threshold = log4js.Level.ERROR;
         NotificationAppender.prototype.append = function(loggingEvent) {
             const formattedMessage = FileAppender.getFormattedMessage(this, loggingEvent);
