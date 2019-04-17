@@ -31,6 +31,9 @@ var GSWindow = new Lang.Class({
     destroy: function() {
         logger.info("Cleaning up window.");
         Utils.disconnect_tracked_signals(this);
+        if (this.gslayout) { this.gslayout.removeGSWindow(this); }
+        this.window.gswindow = undefined;
+        this.gslayout = null;
     },
     reset: function() {
         this.floating = false;
@@ -39,7 +42,7 @@ var GSWindow = new Lang.Class({
     is_ready: function() {
         var rect = this.rect();
         logger.debug("Window size: h " + rect.height + " w " + rect.width + " x " +rect.x + " y " + rect.y);
-        if (rect.width == 0 || rect.height == 0) {
+        if (rect.width === 0 || rect.height === 0) {
             return false;
         }
         return true;
@@ -53,10 +56,6 @@ var GSWindow = new Lang.Class({
             true,
             this.geometry.x, this.geometry.y,
             this.geometry.width, this.geometry.height);
-    },
-    destroy: function() {
-        this.gslayout.removeGSWindow(this);
-        this.window.gswindow = undefined;
     },
     get_workspace: function() {
         return this.window.get_workspace();

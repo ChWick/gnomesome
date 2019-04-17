@@ -17,7 +17,7 @@ const logging = Me.imports.logging;
 const logger = logging.getLogger('Gnomesome.Manager');
 
 
-current_window = function() {
+var current_window = function() {
     return global.display['focus_window'];
 };
 
