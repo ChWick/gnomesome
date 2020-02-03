@@ -25,21 +25,21 @@ var MenuButton = new Lang.Class({
                                           text: "0" });
 
         // add the icon
-        this.actor.show()
+        this.show();
         this._iconBox = new St.BoxLayout();
         this._iconIndicator = new St.Icon({
             style_class: 'system-status-icon',
-            icon_name: 'window-tile-floating-symbolic',
+            icon_name: 'gnomesome-window-tile-floating-symbolico.svg',
         });
         this._iconBox.add(this._iconIndicator);
-        this.actor.add_actor(this._iconBox);
-        this.actor.add_style_class_name('panel-status-button');
+        this.add_actor(this._iconBox);
+        this.add_style_class_name('panel-status-button');
 
         // initialize menu
         const addLayout = (layout) => {
             const item = new PopupMenu.PopupBaseMenuItem();
             const label = new St.Label({text: layout.display});
-            const icon = new St.Icon({style_class: 'popup-menu-icon', icon_name: layout.icon})
+            const icon = new St.Icon({style_class: 'system-status-icon', icon_name: layout.icon});
             item.actor.add(icon, {align: St.Align.START});
             item.actor.add(label);
             this.menu.addMenuItem(item);
@@ -77,7 +77,7 @@ var MenuButton = new Lang.Class({
         Utils.connect_and_track(this, Utils.DisplayWrapper.getScreen(),
             'notify::focus-window',
             Lang.bind(this, this._updateIndicator));
-        Utils.connect_and_track(this, this.actor,
+        Utils.connect_and_track(this, this,
             'scroll-event',
             Lang.bind(this, this._scrollEvent));
 
@@ -109,9 +109,9 @@ var MenuButton = new Lang.Class({
         const direction = event.get_scroll_direction();
         const cl = this._manager.current_layout();
         if (!cl) {return;}
-        if (direction == Clutter.ScrollDirection.DOWN) {
+        if (direction === Clutter.ScrollDirection.DOWN) {
             cl.roll_layout(+1);
-        } else if (direction == Clutter.ScrollDirection.UP) {
+        } else if (direction === Clutter.ScrollDirection.UP) {
             cl.roll_layout(-1);
         }
     },

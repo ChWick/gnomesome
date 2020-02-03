@@ -12,7 +12,7 @@ const logger = logging.getLogger('Gnomesome.Layout');
 const Gettext = imports.gettext.domain('gnomesome');
 const _ = Gettext.gettext;
 
-const Modes = {
+var Modes = {
     FLOATING: 0,
     VBOXLAYOUT: 1,
     HBOXLAYOUT: 2,
@@ -23,28 +23,28 @@ const Modes = {
             enterLayout: FloatLayout.enterFloatingLayout,
             exitLayout: FloatLayout.exitFloatingLayout,
             layout: FloatLayout.updateFloatingLayout,
-            icon: "window-tile-floating-symbolic",
+            icon: "gnomesome-window-tile-floating-symbolic",
         },
         1: {
             value: 1, name: "horizontal", display: _("Horizontal"),
             enterLayout: SplitLayout.enterVBoxLayout,
             exitLayout: SplitLayout.exitVBoxLayout,
             layout: SplitLayout.applyVBoxLayout,
-            icon: "window-tile-vertical-symbolic",
+            icon: "gnomesome-window-tile-vertical-symbolic",
         },
         2: {
             value: 2, name: "vertical", display: _("Vertical"),
             enterLayout: SplitLayout.enterHBoxLayout,
             exitLayout: SplitLayout.exitHBoxLayout,
             layout: SplitLayout.applyHBoxLayout,
-            icon: "window-tile-horizontal-symbolic",
+            icon: "gnomesome-window-tile-horizontal-symbolic",
         },
         3: {
             value: 3, name: "maximized", display: _("Maximized"),
             enterLayout: MaximizeLayout.enterMaximizeLayout,
             exitLayout: MaximizeLayout.exitMaximizeLayout,
             layout: MaximizeLayout.updateMaximizeLayout,
-            icon: "window-tile-full-symbolic",
+            icon: "gnomesome-window-tile-full-symbolic",
         },
     },
     byName: function(name) {
