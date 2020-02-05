@@ -8,9 +8,12 @@ const Me = ExtensionUtils.getCurrentExtension();
 const Utils = Me.imports.utils;
 const Shell = imports.gi.Shell;
 const LayoutModes = Me.imports.layout.Modes;
+const Gio = imports.gi.Gio;
 
 const PanelMenu = imports.ui.panelMenu;
 const PopupMenu = imports.ui.popupMenu;
+
+const rootPath = Me.path;
 
 var MenuButton = new Lang.Class({
     Name: 'Gnomesome.MenuButton',
@@ -39,7 +42,7 @@ var MenuButton = new Lang.Class({
         const addLayout = (layout) => {
             const item = new PopupMenu.PopupBaseMenuItem();
             const label = new St.Label({text: layout.display});
-            const icon = new St.Icon({style_class: 'system-status-icon', icon_name: layout.icon});
+            const icon = new St.Icon({style_class: 'system-status-icon', gicon: Gio.icon_new_for_string(rootPath + '/' +  layout.icon)});
             item.actor.add(icon, {align: St.Align.START});
             item.actor.add(label);
             this.menu.addMenuItem(item);
@@ -50,8 +53,16 @@ var MenuButton = new Lang.Class({
         for (let v of Object.values(LayoutModes.properties)) {
             addLayout(v);
         }
+
+        // Separator
         this.menu.addMenuItem(new PopupMenu.PopupSeparatorMenuItem());
-        const item = new PopupMenu.PopupMenuItem("Gnomesome Settings");
+
+        // Settings
+        const item = new PopupMenu.PopupBaseMenuItem()
+        let label = new St.Label({text: "Gnomesome Settings"});
+        let icon = new St.Icon({style_class: 'system-status-icon', icon_name: 'preferences-other'});
+        item.actor.add(icon, {align: St.Align.START});
+        item.actor.add(label);
         item.connect('activate', () => {
             var uuid = "gnomesome@chwick.github.com";
             var appSys = Shell.AppSystem.get_default();
@@ -88,7 +99,7 @@ var MenuButton = new Lang.Class({
         this.parent();
     },
     setLayout: function(layout) {
-        this._iconIndicator.icon_name = layout.icon;
+        this._iconIndicator.gicon = Gio.icon_new_for_string(rootPath + '/' +  layout.icon);
     },
     _updateIndicator: function() {
         this._currentWorkspace = Utils.DisplayWrapper.getWorkspaceManager().get_active_workspace().index();
