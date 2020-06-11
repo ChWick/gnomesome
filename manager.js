@@ -38,8 +38,6 @@ var Manager = new Lang.Class({
         this.prefs = GnomesomeSettings.prefs;
         this._bound_keybindings = {};
 
-        this.initIcons();
-
         this.initKeyBindings();
 
         logger.info("Number of workspaces is " + workspace_manager.get_n_workspaces());
@@ -240,19 +238,6 @@ var Manager = new Lang.Class({
             Lang.bind(this, function() {this._do(func, "handler for binding " + name);}));
         if(!added) {
             logger.error("Error: failed to add keybinding handler for: " + name);
-        }
-    },
-
-    initIcons: function() {
-        // A BIT HACKY: add the shellshape icon directory to the current theme's search path,
-        // as this seems to be the only way to get symbolic icons loading properly.
-        var theme = imports.gi.Gtk.IconTheme.get_default();
-        var icon_dir = Me.dir.get_child('icons').get_child('status');
-        if(icon_dir.query_exists(null)) {
-            logger.debug("adding icon dir: " + icon_dir.get_path());
-            theme.append_search_path(icon_dir.get_path());
-        } else {
-            logger.error("no icon dir found at " + icon_dir.get_path() + " - assuming globally installed");
         }
     },
 
