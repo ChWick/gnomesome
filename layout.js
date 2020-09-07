@@ -26,14 +26,14 @@ var Modes = {
             icon: "icons/status/gnomesome-window-tile-floating-symbolic.svg",
         },
         1: {
-            value: 1, name: "horizontal", display: _("Horizontal"),
+            value: 1, name: "vertical", display: _("Vertical"),
             enterLayout: SplitLayout.enterVBoxLayout,
             exitLayout: SplitLayout.exitVBoxLayout,
             layout: SplitLayout.applyVBoxLayout,
             icon: "icons/status/gnomesome-window-tile-vertical-symbolic.svg",
         },
         2: {
-            value: 2, name: "vertical", display: _("Vertical"),
+            value: 2, name: "horizontal", display: _("Horizontal"),
             enterLayout: SplitLayout.enterHBoxLayout,
             exitLayout: SplitLayout.exitHBoxLayout,
             layout: SplitLayout.applyHBoxLayout,
