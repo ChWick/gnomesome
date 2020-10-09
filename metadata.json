@@ -2,7 +2,7 @@
 	"name": "Gnomesome",
 	"description": "Tiling window manager with awesome keybindings",
 	"uuid": "gnomesome@chwick.github.com",
-	"shell-version": ["3.18.5", "3.28", "3.30", "3.36"],
+	"shell-version": ["3.18.5", "3.28", "3.30", "3.36", "3.38"],
 	"settings-keybindings": "org.gnome.shell.extensions.gnomesome.keybindings",
 	"url": "https://github.com/chwick/gnomesome"
 }
