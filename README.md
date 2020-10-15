@@ -9,14 +9,14 @@ Yet another gnome extension for window tiling inspired by awesome supporting mul
 * To remove title bars: https://extensions.gnome.org/extension/723/pixel-saver/
 * For a better multi monitor support: https://extensions.gnome.org/extension/921/multi-monitors-add-on/
 
-### Disable dash-to-dock Mod4+Digit keybindings
+### Disable Mod4+Digit keybindings (Gnome 3.32 / Ubuntu 19.04 or later)
 By default the dash-to-dock extension of Ubuntu overrides all Mod4+[Shift]+Digit keybindings for selecting a workspace, or moving windows to a certain workspace.
 To disable these shortcuts open the deconf-Editor, navigate to `org/gnome/shell/extensions/dash-to-dock/hot-keys` and set it to `false`, or use:
 ```
 gsettings set org.gnome.shell.extensions.dash-to-dock hot-keys false
 ```
 
-On Ubuntu 19.04 you need also to [disable all keybindings](https://askubuntu.com/questions/968103/disable-the-default-app-key-supernum-functionality-on-ubuntu-17-10-and-later):
+On Ubuntu 19.04 you need also to [disable all keybindings](https://askubuntu.com/questions/968103/disable-the-default-app-key-supernum-functionality-on-ubuntu-17-10-and-later) (see also [here](https://gitlab.gnome.org/GNOME/gnome-shell/-/issues/1250)):
 ```
 gsettings set org.gnome.shell.keybindings switch-to-application-1 []
 gsettings set org.gnome.shell.keybindings switch-to-application-2 []
