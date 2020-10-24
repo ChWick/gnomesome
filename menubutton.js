@@ -1,11 +1,9 @@
 const St = imports.gi.St;
-const Main = imports.ui.main;
 const Lang = imports.lang;
 const Clutter = imports.gi.Clutter;
 const ExtensionUtils = imports.misc.extensionUtils;
 const Me = ExtensionUtils.getCurrentExtension();
 const Utils = Me.imports.utils;
-const Shell = imports.gi.Shell;
 const LayoutModes = Me.imports.layout.Modes;
 const Gio = imports.gi.Gio;
 
@@ -13,6 +11,10 @@ const PanelMenu = imports.ui.panelMenu;
 const PopupMenu = imports.ui.popupMenu;
 
 const rootPath = Me.path;
+const Config = imports.misc.config;
+
+const POST_3_36 = parseFloat(Config.PACKAGE_VERSION) >= 3.36;
+
 
 var MenuButton = new Lang.Class({
     Name: 'Gnomesome.MenuButton',
@@ -31,7 +33,7 @@ var MenuButton = new Lang.Class({
         this._iconBox = new St.BoxLayout();
         this._iconIndicator = new St.Icon({
             style_class: 'system-status-icon',
-            icon_name: 'gnomesome-window-tile-floating-symbolico.svg',
+            icon_name: 'gnomesome-window-tile-floating-symbolic.svg',
         });
         this._iconBox.add(this._iconIndicator);
         this.add_actor(this._iconBox);
@@ -39,11 +41,7 @@ var MenuButton = new Lang.Class({
 
         // initialize menu
         const addLayout = (layout) => {
-            const item = new PopupMenu.PopupBaseMenuItem();
-            const label = new St.Label({text: layout.display});
-            const icon = new St.Icon({style_class: 'system-status-icon', gicon: Gio.icon_new_for_string(rootPath + '/' +  layout.icon)});
-            item.actor.add(icon, {align: St.Align.START});
-            item.actor.add(label);
+            const item = new PopupMenu.PopupImageMenuItem(layout.display, Gio.icon_new_for_string(rootPath + '/' +  layout.icon));
             this.menu.addMenuItem(item);
             item.connect('activate', () => {
                 this._manager.set_current_layout_mode(layout.value);
@@ -57,19 +55,14 @@ var MenuButton = new Lang.Class({
         this.menu.addMenuItem(new PopupMenu.PopupSeparatorMenuItem());
 
         // Settings
-        const item = new PopupMenu.PopupBaseMenuItem()
-        let label = new St.Label({text: "Gnomesome Settings"});
-        let icon = new St.Icon({style_class: 'system-status-icon', icon_name: 'preferences-other'});
-        item.actor.add(icon, {align: St.Align.START});
-        item.actor.add(label);
+        const item = new PopupMenu.PopupImageMenuItem("Gnomesome Settings", 'preferences-other')
         item.connect('activate', () => {
-            var uuid = "gnomesome@chwick.github.com";
-            var appSys = Shell.AppSystem.get_default();
-            var app = appSys.lookup_app('gnome-shell-extension-prefs.desktop');
-            var info = app.get_app_info();
-            var timestamp = global.display.get_current_time_roundtrip();
-            info.launch_uris(['extension:///' + uuid],
-            global.create_app_launch_context(timestamp, -1));
+            const uuid = 'gnomesome@chwick.github.com';
+            if (POST_3_36) {
+                imports.misc.util.spawn(['gnome-extensions', 'prefs', uuid])
+            } else {
+                imports.misc.util.spawn(['gnome-shell-extension-prefs', uuid])
+            }
         });
         this.menu.addMenuItem(item);
 
